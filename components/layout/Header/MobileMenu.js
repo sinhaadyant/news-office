@@ -112,7 +112,9 @@ const MobileMenu = ({ handleMobileMenuClose, openClass }) => {
                     <Link href="/blog">Our Blog</Link>
                   </li>
                   <li>
-                    <Link href="/blog/1">Blog Details</Link>
+                    <Link href="/article/scientists-speculate-that-ours-might-not-be-held">
+                      Blog Details
+                    </Link>
                   </li>
                 </ul>
                 <div

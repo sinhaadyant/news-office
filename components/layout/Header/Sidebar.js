@@ -21,50 +21,50 @@ export default function Sidebar({ handleSidebarClose }) {
             <ul className="offCanvas__instagram list-wrap">
               <li>
                 <Link
-                  href="/assets/img/blog/blog01.jpg"
+                  href="/assets/img/article/blog01.jpg"
                   className="popup-image"
                 >
-                  <img src="/assets/img/blog/blog01.jpg" alt="img" />
+                  <img src="/assets/img/article/blog01.jpg" alt="img" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/assets/img/blog/blog02.jpg"
+                  href="/assets/img/article/blog02.jpg"
                   className="popup-image"
                 >
-                  <img src="/assets/img/blog/blog02.jpg" alt="img" />
+                  <img src="/assets/img/article/blog02.jpg" alt="img" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/assets/img/blog/blog03.jpg"
+                  href="/assets/img/article/blog03.jpg"
                   className="popup-image"
                 >
-                  <img src="/assets/img/blog/blog03.jpg" alt="img" />
+                  <img src="/assets/img/article/blog03.jpg" alt="img" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/assets/img/blog/blog04.jpg"
+                  href="/assets/img/article/blog04.jpg"
                   className="popup-image"
                 >
-                  <img src="/assets/img/blog/blog04.jpg" alt="img" />
+                  <img src="/assets/img/article/blog04.jpg" alt="img" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/assets/img/blog/blog05.jpg"
+                  href="/assets/img/article/blog05.jpg"
                   className="popup-image"
                 >
-                  <img src="/assets/img/blog/blog05.jpg" alt="img" />
+                  <img src="/assets/img/article/blog05.jpg" alt="img" />
                 </Link>
               </li>
               <li>
                 <Link
-                  href="/assets/img/blog/blog06.jpg"
+                  href="/assets/img/article/blog06.jpg"
                   className="popup-image"
                 >
-                  <img src="/assets/img/blog/blog06.jpg" alt="img" />
+                  <img src="/assets/img/article/blog06.jpg" alt="img" />
                 </Link>
               </li>
             </ul>

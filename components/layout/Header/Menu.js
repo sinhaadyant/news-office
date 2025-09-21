@@ -2,6 +2,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import data from "@/util/menu";
 const ThemeSwitch = dynamic(() => import("@/components/elements/ThemeSwitch"), {
   ssr: false,
 });
@@ -16,7 +17,10 @@ export default function Menu({
   const router = useRouter();
   const [searchToggle, setSearchToggle] = useState(false);
   const searchHandle = () => setSearchToggle(!searchToggle);
-
+  // const menu = data;
+  if (data === undefined) {
+    return null;
+  }
   return (
     <>
       <div className="tgmenu__wrap">
@@ -55,7 +59,25 @@ export default function Menu({
           )}
           <div className="tgmenu__navbar-wrap tgmenu__main-menu d-none d-lg-flex">
             <ul className="navigation">
-              <li className="menu-item-has-children">
+              {data &&
+                data.map((item) => (
+                  <li
+                    key={item.id}
+                    className={router.pathname == item.link ? "active" : ""}
+                  >
+                    <Link href={item.link}>{item.name}</Link>
+                    {item.sub_menu.length > 0 && (
+                      <ul className="sub-menu">
+                        {item.sub_menu.map((subItem) => (
+                          <li key={subItem.id}>
+                            <Link href={subItem.link}>{subItem.name}</Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </li>
+                ))}
+              {/* <li className="menu-item-has-children">
                 <Link href="#">Home</Link>
                 <ul className="sub-menu">
                   <li className={router.pathname == "/" ? "active" : ""}>
@@ -96,14 +118,14 @@ export default function Menu({
                   <li className={router.pathname == "/blog" ? "active" : ""}>
                     <Link href="/blog">Our Blog</Link>
                   </li>
-                  <li className={router.pathname == "/blog/1" ? "active" : ""}>
-                    <Link href="/blog/1">Blog Details</Link>
+                  <li className={router.pathname == "/article/1" ? "active" : ""}>
+                    <Link href="/article/scientists-speculate-that-ours-might-not-be-held">Blog Details</Link>
                   </li>
                 </ul>
               </li>
               <li>
                 <Link href="/nft">NFT</Link>
-              </li>
+              </li> */}
             </ul>
           </div>
           <div className="tgmenu__action">
@@ -114,11 +136,6 @@ export default function Menu({
               <li className="user">
                 <Link href="#">
                   <i className="far fa-user" />
-                </Link>
-              </li>
-              <li className="header-cart">
-                <Link href="#">
-                  <i className="far fa-shopping-basket" />
                 </Link>
               </li>
               <li className="header-search">

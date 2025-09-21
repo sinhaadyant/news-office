@@ -1,0 +1,12 @@
+export { default as HeroBanner } from "./HeroBanner";
+export { default as PopularPosts } from "./PopularPosts";
+export { default as TrendingNews } from "./TrendingNews";
+export { default as Categories } from "./Categories";
+export { default as InteriorSection } from "./InteriorSection";
+export { default as TravelSection } from "./TravelSection";
+export { default as TechnologySection } from "./TechnologySection";
+export { default as NftSection } from "./NftSection";
+export { default as LifestyleSection } from "./LifestyleSection";
+export { default as MinimalSection } from "./MinimalSection";
+export { default as HandpickedSection } from "./HandpickedSection";
+export { default as NewsletterSection } from "./NewsletterSection";

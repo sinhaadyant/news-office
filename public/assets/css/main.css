@@ -6268,4 +6268,96 @@ blockquote .blockquote-cite .info span {
   background: #fff;
   border-radius: 5px;
   margin-top: -6px;
-}/*# sourceMappingURL=main.css.map */
+}
+
+/* Author Statistics Widget Styles */
+.author-stats-widget {
+  padding: 20px 0;
+}
+
+.author-stats-widget .stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.author-stats-widget .stat-item:last-child {
+  border-bottom: none;
+}
+
+.author-stats-widget .stat-number {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tg-common-color-blue);
+  line-height: 1;
+}
+
+.author-stats-widget .stat-label {
+  font-size: 14px;
+  color: #666;
+  font-weight: 500;
+}
+
+.author-stats-widget .stat-date {
+  font-size: 12px;
+  color: #888;
+  font-weight: 400;
+}
+
+/* Author Info Styles */
+.author-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.author-info .author-name {
+  font-weight: 600;
+  color: #333;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.author-info .author-name:hover {
+  color: var(--tg-common-color-blue);
+}
+
+.author-info .author-count {
+  font-size: 12px;
+  color: #888;
+  background: #f8f9fa;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+/* Author Profile Section Styles */
+.author-stats {
+  margin-top: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.author-stats .stat-item {
+  text-align: center;
+  padding: 15px 10px;
+}
+
+.author-stats .stat-item h6 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tg-common-color-blue);
+  margin-bottom: 5px;
+}
+
+.author-stats .stat-item span {
+  font-size: 12px;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/*# sourceMappingURL=main.css.map */

@@ -1,0 +1,338 @@
+import LatestSidebar from "@/components/elements/LatestSidebar";
+import Layout from "@/components/layout/Layout";
+import data from "@/util/blogData";
+import Link from "next/link";
+import { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/router";
+
+import {
+  PAGINATION_CONFIG,
+  LAYOUT_CONFIG,
+  GRID_CONFIG,
+  SECTION_CONFIG,
+  BUTTON_CONFIG,
+  LOADING_CONFIG,
+} from "@/constants/main";
+
+export default function LatestPage() {
+  const router = useRouter();
+  const { page } = router.query;
+
+  const pagination = PAGINATION_CONFIG.LATEST_NEWS_ITEMS_PER_PAGE;
+  const [currentPage, setCurrentPage] = useState(page);
+  const [articleData, setArticleData] = useState(data);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [displayedData, setDisplayedData] = useState([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Calculate total pages
+  const totalPages = Math.ceil(data.length / pagination);
+
+  // Initialize page from URL or default to 1
+  useEffect(() => {
+    if (page && !isNaN(parseInt(page))) {
+      const pageNum = parseInt(page);
+      if (pageNum >= 1 && pageNum <= totalPages) {
+        setCurrentPage(pageNum);
+        setIsInitialized(true);
+      } else {
+        // Invalid page number - redirect to /latest-news
+        router.replace("/latest-news");
+        return;
+      }
+    } else {
+      // No page parameter - start from page 1
+      setIsInitialized(true);
+    }
+  }, [page, totalPages, router]);
+
+  // Load initial data based on current page
+  useEffect(() => {
+    if (isInitialized) {
+      loadPageData(currentPage);
+    }
+  }, [currentPage, isInitialized]);
+
+  // Function to load data for a specific page
+  const loadPageData = useCallback(
+    (pageNum) => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const startIndex = (pageNum - 1) * pagination;
+        const endIndex = startIndex + pagination;
+        const pageData = data.slice(startIndex, endIndex);
+
+        if (pageNum === 1) {
+          // First page - replace data
+          setDisplayedData(pageData);
+        } else {
+          // Subsequent pages - append data
+          setDisplayedData((prev) => [...prev, ...pageData]);
+        }
+
+        // Check if there's more data
+        setHasMore(endIndex < data.length);
+      } catch (err) {
+        setError("Failed to load articles");
+        console.error("Error loading data:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [pagination]
+  );
+
+  // Load more function
+  const handleLoadMore = useCallback(() => {
+    if (!loading && hasMore) {
+      const nextPage = currentPage + 1;
+      setCurrentPage(nextPage);
+
+      // Update URL to reflect the current state without navigation
+      // router.replace(`/latest-news/${nextPage}`, undefined, { shallow: true });
+    }
+  }, [loading, hasMore, currentPage, router]);
+
+  // Add scroll-based functionality for resetting to latest news
+  useEffect(() => {
+    const handleScroll = () => {
+      // If scrolled to top, reset to show only latest news (page 1)
+      if (window.scrollY === 0 && displayedData.length > pagination) {
+        setCurrentPage(1);
+        setDisplayedData(data.slice(0, pagination));
+        // router.replace("/latest-news", undefined, { shallow: true });
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [displayedData.length, pagination, router]);
+
+  // Function to generate description for articles that don't have one
+  const generateDescription = (article) => {
+    // You can customize this logic based on your needs
+    const descriptions = [
+      "Discover the latest insights and trends in this fascinating topic.",
+      "Explore new perspectives and cutting-edge developments in this field.",
+      "Learn about the most recent updates and innovations in this area.",
+      "Stay informed with the latest news and analysis on this subject.",
+      "Get the inside scoop on recent developments and future prospects.",
+    ];
+
+    // Use article ID to consistently assign descriptions
+    const index = article.id % descriptions.length;
+    return descriptions[index];
+  };
+
+  // Function to get category link
+  const getCategoryLink = (category) => {
+    const categoryMap = {
+      Gaming: "/gaming",
+      Tech: "/technology",
+      Movie: "/movie",
+      Sports: "/sports",
+      NFT: "/nft",
+      Lifestyle: "/lifestyle",
+    };
+    return categoryMap[category] || "/blog";
+  };
+
+  // Function to get author link
+  const getAuthorLink = (author) => {
+    return `/author/${author.toLowerCase().replace(/[^a-z0-9]/g, "-")}`;
+  };
+
+  // Show loading while initializing
+  if (!isInitialized) {
+    return (
+      <Layout headerStyle={6} footerStyle={3} footerClass="black-bg" logoWhite>
+        <section className="latest-post-area pt-80 pb-80">
+          <div className="container">
+            <div className="text-center">
+              <div className="spinner-border text-primary" role="status">
+                <span className="visually-hidden">Loading...</span>
+              </div>
+              <p className="mt-3">Loading latest news...</p>
+            </div>
+          </div>
+        </section>
+      </Layout>
+    );
+  }
+
+  return (
+    <>
+      <Layout headerStyle={6} footerStyle={3} footerClass="black-bg" logoWhite>
+        <section className="latest-post-area pt-80 pb-80">
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-xl-9 col-lg-8">
+                <div className="section__title-wrap mb-40">
+                  <div className="row align-items-end">
+                    <div className="col-sm-6">
+                      <div className="section__title">
+                        <span className="section__sub-title">Latest</span>
+                        <h3 className="section__main-title">Latest News</h3>
+                        {currentPage > 1 && (
+                          <p className="section__description">
+                            Showing page {currentPage} of {totalPages}(
+                            {displayedData.length} of {data.length} articles)
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Error State */}
+                {error && (
+                  <div className="alert alert-danger" role="alert">
+                    {error}
+                    <button
+                      className="btn btn-sm btn-outline-danger ms-2"
+                      onClick={() => loadPageData(currentPage)}
+                    >
+                      Retry
+                    </button>
+                  </div>
+                )}
+
+                {/* Articles List */}
+                <div className="latest__post-wrap">
+                  {displayedData.length === 0 && !loading && (
+                    <div className="text-center py-5">
+                      <p className="text-muted">No articles found.</p>
+                      <Link
+                        href="/latest-news"
+                        className="btn btn-outline-primary"
+                      >
+                        Back to Latest News
+                      </Link>
+                    </div>
+                  )}
+                  {displayedData.map((item, i) => (
+                    <div className="latest__post-item" key={`${item.id}-${i}`}>
+                      <div className="latest__post-thumb tgImage__hover">
+                        <Link href={`/article/${item.id}`}>
+                          <img
+                            src={`/assets/img/${item.group}/${item.img}`}
+                            alt={item.title}
+                            loading="lazy"
+                          />
+                        </Link>
+                      </div>
+                      <div className="latest__post-content">
+                        <ul className="tgbanner__content-meta list-wrap">
+                          <li className="category">
+                            <Link href={getCategoryLink(item.category)}>
+                              {item.category.toLowerCase()}
+                            </Link>
+                          </li>
+                          <li>
+                            <span className="by">By</span>{" "}
+                            <Link href={getAuthorLink(item.author)}>
+                              {item.author}
+                            </Link>
+                          </li>
+                          <li>{item.date}</li>
+                          {item.trending && (
+                            <li>
+                              <span className="trending-badge">
+                                🔥 Trending
+                              </span>
+                            </li>
+                          )}
+                        </ul>
+                        <h3 className="title tgcommon__hover">
+                          <Link href={`/article/${item.id}`}>{item.title}</Link>
+                        </h3>
+                        <p>{generateDescription(item)}</p>
+                        <ul className="post__activity list-wrap">
+                          <li>
+                            <i className="fal fa-signal" />{" "}
+                            {Math.floor(Math.random() * 5) + 1}k
+                          </li>
+                          <li>
+                            <Link href={`/article/${item.id}`}>
+                              <i className="fal fa-comment-dots" />{" "}
+                              {Math.floor(Math.random() * 100) + 50}
+                            </Link>
+                          </li>
+                          <li>
+                            <i className="fal fa-share-alt" />{" "}
+                            {Math.floor(Math.random() * 20) + 10}
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Loading State */}
+                {loading && (
+                  <div className="text-center py-4">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                    <p className="mt-2">Loading more articles...</p>
+                  </div>
+                )}
+
+                {/* Load More Button */}
+                {hasMore && !loading && (
+                  <div className="latest__post-more text-center">
+                    <button
+                      className="btn"
+                      onClick={handleLoadMore}
+                      disabled={loading}
+                    >
+                      <span className="text">
+                        {loading ? "Loading..." : "Load More"}
+                      </span>
+                      <i className="far fa-plus" />
+                    </button>
+                  </div>
+                )}
+
+                {/* No More Data */}
+                {!hasMore && displayedData.length > 0 && (
+                  <div className="latest__post-more text-center">
+                    <p className="text-muted">
+                      You've reached the end! Showing all {data.length}{" "}
+                      articles.
+                    </p>
+                    <Link
+                      href="/latest-news"
+                      className="btn btn-outline-primary"
+                    >
+                      Back to First Page
+                    </Link>
+                  </div>
+                )}
+
+                {/* Pagination Info */}
+                {displayedData.length > 0 && (
+                  <div className="pagination-info text-center mt-4">
+                    <small className="text-muted">
+                      Page {currentPage} of {totalPages} | Showing{" "}
+                      {displayedData.length} articles | Total: {data.length}{" "}
+                      articles
+                    </small>
+                  </div>
+                )}
+              </div>
+
+              <div className="col-xl-3 col-lg-4 col-md-6">
+                <LatestSidebar />
+              </div>
+            </div>
+          </div>
+        </section>
+      </Layout>
+    </>
+  );
+}
