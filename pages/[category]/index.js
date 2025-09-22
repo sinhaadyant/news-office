@@ -1,15 +1,20 @@
-import LatestSidebar from "@/components/elements/LatestSidebar";
-import Layout from "@/components/layout/Layout";
-import data from "@/util/blogData";
-import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
-import { generateSlug } from "@/util/articleUtils";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import LatestSidebar from '@/components/elements/LatestSidebar';
+import Layout from '@/components/layout/Layout';
+import PageErrorBoundary from '@/components/common/PageErrorBoundary';
+import { ArticleCardSkeleton } from '@/components/common/SkeletonLoaders';
+import { AdBlockBannerPackage } from '@/components/common/AdBlockBannerPackage';
+import AdBlock from '@/components/ads/AdBlock';
+import PremiumBadge from '@/components/common/PremiumBadge';
+import data from '@/util/blogData';
+import { generateSlug } from '@/util/articleUtils';
 import {
   getCategoryLink,
   getAuthorLink,
   getArticleLink,
-} from "@/util/urlUtils";
+} from '@/util/urlUtils';
 import {
   PAGINATION_CONFIG,
   LAYOUT_CONFIG,
@@ -17,7 +22,7 @@ import {
   SECTION_CONFIG,
   BUTTON_CONFIG,
   LOADING_CONFIG,
-} from "@/constants/main";
+} from '@/constants/main';
 
 export default function CategoryPage() {
   const router = useRouter();
@@ -34,7 +39,7 @@ export default function CategoryPage() {
 
   // Filter data by category
   const filteredData = data.filter(
-    (item) => item.category.toLowerCase() === category?.toLowerCase()
+    item => item.category.toLowerCase() === category?.toLowerCase()
   );
 
   // Calculate total pages based on filtered data
@@ -72,7 +77,7 @@ export default function CategoryPage() {
 
   // Function to load data for a specific page
   const loadPageData = useCallback(
-    (pageNum) => {
+    pageNum => {
       setLoading(true);
       setError(null);
 
@@ -86,14 +91,14 @@ export default function CategoryPage() {
           setDisplayedData(pageData);
         } else {
           // Subsequent pages - append data
-          setDisplayedData((prev) => [...prev, ...pageData]);
+          setDisplayedData(prev => [...prev, ...pageData]);
         }
 
         // Check if there's more data
         setHasMore(endIndex < filteredData.length);
       } catch (err) {
-        setError("Failed to load articles");
-        console.error("Error loading data:", err);
+        setError('Failed to load articles');
+        console.error('Error loading data:', err);
       } finally {
         setLoading(false);
       }
@@ -123,19 +128,19 @@ export default function CategoryPage() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [displayedData.length, pagination, router, category, filteredData]);
 
   // Function to generate description for articles that don't have one
-  const generateDescription = (article) => {
+  const generateDescription = article => {
     // You can customize this logic based on your needs
     const descriptions = [
-      "Discover the latest insights and trends in this fascinating topic.",
-      "Explore new perspectives and cutting-edge developments in this field.",
-      "Learn about the most recent updates and innovations in this area.",
-      "Stay informed with the latest news and analysis on this subject.",
-      "Get the inside scoop on recent developments and future prospects.",
+      'Discover the latest insights and trends in this fascinating topic.',
+      'Explore new perspectives and cutting-edge developments in this field.',
+      'Learn about the most recent updates and innovations in this area.',
+      'Stay informed with the latest news and analysis on this subject.',
+      'Get the inside scoop on recent developments and future prospects.',
     ];
 
     // Use article ID to consistently assign descriptions
@@ -154,18 +159,13 @@ export default function CategoryPage() {
       >
         <section className={SECTION_CONFIG.LATEST_POST_AREA}>
           <div className={GRID_CONFIG.CONTAINER_DEFAULT}>
-            <div className="text-center">
-              <div
-                className={`${LOADING_CONFIG.SPINNER_DEFAULT} text-primary`}
-                role="status"
-              >
-                <span className="visually-hidden">Loading...</span>
+            <div className='row'>
+              <div className='col-lg-8'>
+                <ArticleCardSkeleton count={6} />
               </div>
-              <p className="mt-3">
-                {category
-                  ? `Loading ${category} articles...`
-                  : "Loading category..."}
-              </p>
+              <div className='col-lg-4'>
+                <ArticleCardSkeleton count={3} />
+              </div>
             </div>
           </div>
         </section>
@@ -174,65 +174,71 @@ export default function CategoryPage() {
   }
 
   return (
-    <>
+    <PageErrorBoundary pageName='category page'>
       <Layout
         headerStyle={LAYOUT_CONFIG.HEADER_STYLE_LATEST}
         footerStyle={LAYOUT_CONFIG.FOOTER_STYLE_LATEST}
         footerClass={LAYOUT_CONFIG.FOOTER_CLASS_LATEST}
         logoWhite={LAYOUT_CONFIG.LOGO_WHITE_LATEST}
       >
+        {/* AdBlock Warning Banner */}
+        <AdBlockBannerPackage
+          message='Help us continue providing quality content by disabling your ad blocker.'
+          onDismiss={() => console.log('Category banner dismissed')}
+        />
+
         <section className={SECTION_CONFIG.LATEST_POST_AREA}>
           <div className={GRID_CONFIG.CONTAINER_DEFAULT}>
             <div className={GRID_CONFIG.ROW_CENTER}>
               <div className={GRID_CONFIG.MAIN_CONTENT_COL}>
                 {/* Breadcrumb Navigation */}
-                <nav aria-label="breadcrumb" className="mb-3">
-                  <ol className="breadcrumb">
-                    <li className="breadcrumb-item">
-                      <Link href="/">Home</Link>
+                <nav aria-label='breadcrumb' className='mb-3'>
+                  <ol className='breadcrumb'>
+                    <li className='breadcrumb-item'>
+                      <Link href='/'>Home</Link>
                     </li>
-                    <li className="breadcrumb-item">
-                      <Link href="/latest-news">Latest News</Link>
+                    <li className='breadcrumb-item'>
+                      <Link href='/latest-news'>Latest News</Link>
                     </li>
-                    <li className="breadcrumb-item active" aria-current="page">
+                    <li className='breadcrumb-item active' aria-current='page'>
                       {category
                         ? category.charAt(0).toUpperCase() + category.slice(1)
-                        : "Category"}
+                        : 'Category'}
                     </li>
                   </ol>
                 </nav>
 
-                <div className="section__title-wrap mb-40">
-                  <div className="row align-items-end">
-                    <div className="col-sm-6">
-                      <div className="section__title">
-                        <span className="section__sub-title">Category</span>
-                        <h3 className="section__main-title">
+                <div className='section__title-wrap mb-40'>
+                  <div className='row align-items-end'>
+                    <div className='col-sm-6'>
+                      <div className='section__title'>
+                        <span className='section__sub-title'>Category</span>
+                        <h3 className='section__main-title'>
                           {category
                             ? category.charAt(0).toUpperCase() +
                               category.slice(1)
-                            : "Category"}
+                            : 'Category'}
                         </h3>
                         {currentPage > 1 && (
-                          <p className="section__description">
+                          <p className='section__description'>
                             Showing page {currentPage} of {totalPages} (
-                            {displayedData.length} of {filteredData.length}{" "}
+                            {displayedData.length} of {filteredData.length}{' '}
                             articles)
                           </p>
                         )}
                         {filteredData.length > 0 && currentPage === 1 && (
-                          <p className="section__description">
-                            {filteredData.length} articles found in {category}{" "}
+                          <p className='section__description'>
+                            {filteredData.length} articles found in {category}{' '}
                             category
                           </p>
                         )}
                       </div>
                     </div>
-                    <div className="col-sm-6">
-                      <div className="section__read-more text-start text-sm-end">
-                        <Link href="/latest-news">
-                          View All Categories{" "}
-                          <i className="far fa-long-arrow-right" />
+                    <div className='col-sm-6'>
+                      <div className='section__read-more text-start text-sm-end'>
+                        <Link href='/latest-news'>
+                          View All Categories{' '}
+                          <i className='far fa-long-arrow-right' />
                         </Link>
                       </div>
                     </div>
@@ -241,10 +247,10 @@ export default function CategoryPage() {
 
                 {/* Error State */}
                 {error && (
-                  <div className="alert alert-danger" role="alert">
+                  <div className='alert alert-danger' role='alert'>
                     {error}
                     <button
-                      className="btn btn-sm btn-outline-danger ms-2"
+                      className='btn btn-sm btn-outline-danger ms-2'
                       onClick={() => loadPageData(currentPage)}
                     >
                       Retry
@@ -253,40 +259,40 @@ export default function CategoryPage() {
                 )}
 
                 {/* Articles List */}
-                <div className="latest__post-wrap">
+                <div className='latest__post-wrap'>
                   {displayedData.length === 0 && !loading && (
-                    <div className="text-center py-5">
+                    <div className='text-center py-5'>
                       {filteredData.length === 0 ? (
                         <>
-                          <div className="mb-4">
-                            <i className="fas fa-folder-open fa-3x text-muted mb-3"></i>
-                            <h4 className="text-muted">No Articles Found</h4>
-                            <p className="text-muted">
+                          <div className='mb-4'>
+                            <i className='fas fa-folder-open fa-3x text-muted mb-3'></i>
+                            <h4 className='text-muted'>No Articles Found</h4>
+                            <p className='text-muted'>
                               {category
                                 ? `No articles found in "${category}" category.`
-                                : "No articles found in this category."}
+                                : 'No articles found in this category.'}
                             </p>
                           </div>
-                          <div className="d-flex justify-content-center gap-3">
+                          <div className='d-flex justify-content-center gap-3'>
                             <Link
-                              href="/latest-news"
+                              href='/latest-news'
                               className={BUTTON_CONFIG.BTN_PRIMARY}
                             >
-                              <i className="fas fa-arrow-left me-2"></i>
+                              <i className='fas fa-arrow-left me-2'></i>
                               Back to Latest News
                             </Link>
                             <Link
-                              href="/"
+                              href='/'
                               className={BUTTON_CONFIG.BTN_SECONDARY}
                             >
-                              <i className="fas fa-home me-2"></i>
+                              <i className='fas fa-home me-2'></i>
                               Go to Home
                             </Link>
                           </div>
                         </>
                       ) : (
                         <>
-                          <p className="text-muted">
+                          <p className='text-muted'>
                             No more articles to display.
                           </p>
                           <Link
@@ -300,25 +306,26 @@ export default function CategoryPage() {
                     </div>
                   )}
                   {displayedData.map((item, i) => (
-                    <div className="latest__post-item" key={`${item.id}-${i}`}>
-                      <div className="latest__post-thumb tgImage__hover">
+                    <React.Fragment key={`${item.id}-${i}`}>
+                      <div className='latest__post-item'>
+                      <div className='latest__post-thumb tgImage__hover'>
                         <Link href={getArticleLink(item)}>
                           <img
                             src={`/assets/img/${item.group}/${item.img}`}
                             alt={item.title}
-                            loading="lazy"
+                            loading='lazy'
                           />
                         </Link>
                       </div>
-                      <div className="latest__post-content">
-                        <ul className="tgbanner__content-meta list-wrap">
-                          <li className="category">
+                      <div className='latest__post-content'>
+                        <ul className='tgbanner__content-meta list-wrap'>
+                          <li className='category'>
                             <Link href={getCategoryLink(item.category)}>
                               {item.category.toLowerCase()}
                             </Link>
                           </li>
                           <li>
-                            <span className="by">By</span>{" "}
+                            <span className='by'>By</span>{' '}
                             <Link href={getAuthorLink(item.author)}>
                               {item.author}
                             </Link>
@@ -326,71 +333,83 @@ export default function CategoryPage() {
                           <li>{item.date}</li>
                           {item.trending && (
                             <li>
-                              <span className="trending-badge">
+                              <span className='trending-badge'>
                                 🔥 Trending
                               </span>
                             </li>
                           )}
+                          <li>
+                            <PremiumBadge isPremium={item.isPremium} />
+                          </li>
                         </ul>
-                        <h3 className="title tgcommon__hover">
+                        <h3 className='title tgcommon__hover'>
                           <Link href={getArticleLink(item)}>{item.title}</Link>
                         </h3>
                         <p>{generateDescription(item)}</p>
-                        <ul className="post__activity list-wrap">
+                        <ul className='post__activity list-wrap'>
                           <li>
-                            <i className="fal fa-signal" />{" "}
+                            <i className='fal fa-signal' />{' '}
                             {Math.floor(Math.random() * 5) + 1}k
                           </li>
                           <li>
                             <Link href={getArticleLink(item)}>
-                              <i className="fal fa-comment-dots" />{" "}
+                              <i className='fal fa-comment-dots' />{' '}
                               {Math.floor(Math.random() * 100) + 50}
                             </Link>
                           </li>
                           <li>
-                            <i className="fal fa-share-alt" />{" "}
+                            <i className='fal fa-share-alt' />{' '}
                             {Math.floor(Math.random() * 20) + 10}
                           </li>
                         </ul>
                       </div>
                     </div>
+                    {/* Show ad after every 5 articles */}
+                    {(i + 1) % 5 === 0 && (
+                      <AdBlock 
+                        type="block" 
+                        id={`category-ad-${Math.floor(i / 5)}`}
+                        slot={`category-${category}-ad-${Math.floor(i / 5)}`}
+                      />
+                    )}
+                    </React.Fragment>
                   ))}
                 </div>
 
                 {/* Loading State */}
                 {loading && (
-                  <div className="text-center py-4">
+                  <div className='text-center py-4'>
                     <div
                       className={`${LOADING_CONFIG.SPINNER_DEFAULT} text-primary`}
-                      role="status"
+                      role='status'
                     >
-                      <span className="visually-hidden">Loading...</span>
+                      <span className='visually-hidden'>Loading...</span>
                     </div>
-                    <p className="mt-2">Loading more articles...</p>
+                    <p className='mt-2'>Loading more articles...</p>
                   </div>
                 )}
 
                 {/* Load More Button */}
                 {hasMore && !loading && (
-                  <div className="latest__post-more text-center">
+                  <div className='latest__post-more text-center'>
                     <button
                       className={BUTTON_CONFIG.BTN_PRIMARY}
                       onClick={handleLoadMore}
                       disabled={loading}
                     >
-                      <span className="text">
-                        {loading ? "Loading..." : "Load More"}
+                      <span className='text'>
+                        {loading ? 'Loading...' : 'Load More'}
                       </span>
-                      <i className="far fa-plus" />
+                      <i className='far fa-plus' />
                     </button>
                   </div>
                 )}
 
                 {/* No More Data */}
                 {!hasMore && displayedData.length > 0 && (
-                  <div className="latest__post-more text-center">
-                    <p className="text-muted">
-                      You've reached the end! Showing all {filteredData.length}{" "}
+                  <div className='latest__post-more text-center'>
+                    <p className='text-muted'>
+                      You've reached the end! Showing all {filteredData.length}{' '}
                       articles in {category} category.
                     </p>
                     <Link
@@ -404,10 +423,10 @@ export default function CategoryPage() {
 
                 {/* Pagination Info */}
                 {displayedData.length > 0 && (
-                  <div className="pagination-info text-center mt-4">
-                    <small className="text-muted">
-                      Page {currentPage} of {totalPages} | Showing{" "}
-                      {displayedData.length} articles | Total:{" "}
+                  <div className='pagination-info text-center mt-4'>
+                    <small className='text-muted'>
+                      Page {currentPage} of {totalPages} | Showing{' '}
+                      {displayedData.length} articles | Total:{' '}
                       {filteredData.length} articles in {category} category
                     </small>
                   </div>
@@ -421,6 +440,6 @@ export default function CategoryPage() {
           </div>
         </section>
       </Layout>
-    </>
+    </PageErrorBoundary>
   );
 }

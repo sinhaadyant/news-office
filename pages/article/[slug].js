@@ -1,15 +1,23 @@
-import ArticleSidebar from "@/components/elements/ArticleSidebar";
-import Layout from "@/components/layout/Layout";
-import Link from "next/link";
-import Head from "next/head";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import React, { memo, useCallback, useMemo } from 'react';
+import ArticleSidebar from '@/components/elements/ArticleSidebar';
+import Layout from '@/components/layout/Layout';
+import SEOHead from '@/components/common/SEOHead';
+import OptimizedImage from '@/components/common/OptimizedImage';
+import ErrorBoundary from '@/components/common/ErrorBoundary';
+import { AdBlockBannerPackage } from '@/components/common/AdBlockBannerPackage';
+import AdBlock from '@/components/ads/AdBlock';
+import Paywall from '@/components/paywall/Paywall';
+import PremiumBadge from '@/components/common/PremiumBadge';
+import { useUserStore } from '@/stores/useUserStore';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import {
   getArticleBySlug,
   getRelatedArticles,
   getAdjacentArticles,
   generateSlug,
-} from "../../util/articleUtils";
+} from '../../util/articleUtils';
 
 export default function BlogDetails() {
   let Router = useRouter();
@@ -22,11 +30,15 @@ export default function BlogDetails() {
   const [loading, setLoading] = useState(true);
   const { slug } = Router.query;
 
+  const { getContentPreview } = useUserStore();
+
   // Function to split content into paragraphs and add ads
-  const renderContentWithAds = (content) => {
+  const renderContentWithAds = (content, isPremium) => {
     if (!content) return null;
 
-    const paragraphs = content.split("\n\n").filter((p) => p.trim());
+    // Get content preview based on user subscription
+    const displayContent = getContentPreview(content, isPremium);
+    const paragraphs = displayContent.split('\n\n').filter(p => p.trim());
     const contentWithAds = [];
 
     paragraphs.forEach((paragraph, index) => {
@@ -37,20 +49,15 @@ export default function BlogDetails() {
         />
       );
 
-      // Add ad after every 2nd paragraph
+      // Add inline ad after every 2nd paragraph
       if ((index + 1) % 2 === 0 && index < paragraphs.length - 1) {
         contentWithAds.push(
-          <div key={`ad-${index}`} className="content-ad my-4">
-            <div className="ad-container text-center p-4 bg-light border rounded">
-              <div className="ad-placeholder">
-                <h6 className="text-muted mb-2">Advertisement</h6>
-                <div className="ad-content bg-white border p-3 rounded">
-                  <p className="mb-2">Sponsored Content</p>
-                  <small className="text-muted">Your ad could be here</small>
-                </div>
-              </div>
-            </div>
-          </div>
+          <AdBlock 
+            key={`ad-${index}`}
+            type="inline" 
+            id={`article-inline-${index}`}
+            slot={`article-${slug}-inline-${index}`}
+          />
         );
       }
     });
@@ -73,15 +80,15 @@ export default function BlogDetails() {
   if (loading) {
     return (
       <Layout>
-        <section className="blog-details-area pt-80 pb-100">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-xl-8 col-lg-7">
-                <div className="text-center">
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
+        <section className='blog-details-area pt-80 pb-100'>
+          <div className='container'>
+            <div className='row justify-content-center'>
+              <div className='col-xl-8 col-lg-7'>
+                <div className='text-center'>
+                  <div className='spinner-border' role='status'>
+                    <span className='visually-hidden'>Loading...</span>
                   </div>
-                  <p className="mt-3">Loading article...</p>
+                  <p className='mt-3'>Loading article...</p>
                 </div>
               </div>
             </div>
@@ -94,14 +101,14 @@ export default function BlogDetails() {
   if (!item) {
     return (
       <Layout>
-        <section className="blog-details-area pt-80 pb-100">
-          <div className="container">
-            <div className="row justify-content-center">
-              <div className="col-xl-8 col-lg-7">
-                <div className="text-center">
+        <section className='blog-details-area pt-80 pb-100'>
+          <div className='container'>
+            <div className='row justify-content-center'>
+              <div className='col-xl-8 col-lg-7'>
+                <div className='text-center'>
                   <h2>Article Not Found</h2>
                   <p>The article you're looking for doesn't exist.</p>
-                  <Link href="/" className="btn btn-primary">
+                  <Link href='/' className='btn btn-primary'>
                     Go Home
                   </Link>
                 </div>
@@ -114,126 +121,53 @@ export default function BlogDetails() {
   }
 
   return (
-    <>
-      <Head>
-        <title>{item.title} | Sarsa News</title>
-        <meta
-          name="description"
-          content={item.excerpt || item.content?.substring(0, 160) + "..."}
-        />
-        <meta
-          name="keywords"
-          content={item.tags?.join(", ") || `${item.category}, news, article`}
-        />
-        <meta name="author" content={item.author} />
-        <meta
-          property="article:published_time"
-          content={new Date(item.date).toISOString()}
-        />
-        <meta property="article:author" content={item.author} />
-        <meta property="article:section" content={item.category} />
-        <meta
-          property="article:tag"
-          content={item.tags?.join(", ") || item.category}
-        />
-
-        {/* Open Graph / Facebook */}
-        <meta property="og:type" content="article" />
-        <meta property="og:title" content={item.title} />
-        <meta
-          property="og:description"
-          content={item.excerpt || item.content?.substring(0, 160) + "..."}
-        />
-        <meta
-          property="og:image"
-          content={`/assets/img/${item.group}/${item.img}`}
-        />
-        <meta
-          property="og:url"
-          content={`${
-            process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-          }/article/${item.slug}`}
-        />
-        <meta property="og:site_name" content="Sarsa News" />
-
-        {/* Twitter */}
-        <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:title" content={item.title} />
-        <meta
-          property="twitter:description"
-          content={item.excerpt || item.content?.substring(0, 160) + "..."}
-        />
-        <meta
-          property="twitter:image"
-          content={`/assets/img/${item.group}/${item.img}`}
-        />
-
-        {/* Canonical URL */}
-        <link
-          rel="canonical"
-          href={`${
-            process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-          }/article/${item.slug}`}
-        />
-
-        {/* JSON-LD Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "Article",
-              headline: item.title,
-              description:
-                item.excerpt || item.content?.substring(0, 160) + "...",
-              image: `/assets/img/${item.group}/${item.img}`,
-              author: {
-                "@type": "Person",
-                name: item.author,
-              },
-              publisher: {
-                "@type": "Organization",
-                name: "Sarsa News",
-                logo: {
-                  "@type": "ImageObject",
-                  url: "/assets/img/logo/logo.png",
-                },
-              },
-              datePublished: new Date(item.date).toISOString(),
-              dateModified: new Date(item.date).toISOString(),
-              mainEntityOfPage: {
-                "@type": "WebPage",
-                "@id": `${
-                  process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
-                }/article/${item.slug}`,
-              },
-            }),
-          }}
-        />
-      </Head>
+    <ErrorBoundary>
+      <SEOHead
+        title={item.title}
+        description={item.excerpt || item.content?.substring(0, 160) + '...'}
+        canonical={`${
+          process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+        }/article/${item.slug}`}
+        ogImage={`/assets/img/${item.group}/${item.img}`}
+        ogUrl={`${
+          process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+        }/article/${item.slug}`}
+        author={item.author}
+        publishedTime={new Date(item.date).toISOString()}
+        modifiedTime={new Date(item.date).toISOString()}
+        section={item.category}
+        tags={item.tags || item.category}
+        keywords={`${item.tags?.join(', ') || item.category}, news, article`}
+      />
       <Layout
         breadcrumbCategory={item.category}
         breadcrumbPostTitle={item.title}
       >
         <>
-          <section className="blog-details-area pt-80 pb-100">
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-lg-1">
-                  <div className="blog-details-social">
-                    <ul className="list-wrap">
+          {/* AdBlock Warning Banner */}
+          <AdBlockBannerPackage
+            message='Support our journalism by disabling your ad blocker. Quality news needs your support.'
+            onDismiss={() => console.log('Article banner dismissed')}
+          />
+
+          <section className='blog-details-area pt-80 pb-100'>
+            <div className='container'>
+              <div className='row justify-content-center'>
+                <div className='col-lg-1'>
+                  <div className='blog-details-social'>
+                    <ul className='list-wrap'>
                       <li>
                         <Link
                           href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
                             `${
                               process.env.NEXT_PUBLIC_BASE_URL ||
-                              "http://localhost:3000"
+                              'http://localhost:3000'
                             }/article/${item.slug}`
                           )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target='_blank'
+                          rel='noopener noreferrer'
                         >
-                          <i className="fab fa-facebook-f" />
+                          <i className='fab fa-facebook-f' />
                         </Link>
                       </li>
                       <li>
@@ -243,13 +177,13 @@ export default function BlogDetails() {
                           )}&url=${encodeURIComponent(
                             `${
                               process.env.NEXT_PUBLIC_BASE_URL ||
-                              "http://localhost:3000"
+                              'http://localhost:3000'
                             }/article/${item.slug}`
                           )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target='_blank'
+                          rel='noopener noreferrer'
                         >
-                          <i className="fab fa-twitter" />
+                          <i className='fab fa-twitter' />
                         </Link>
                       </li>
                       <li>
@@ -257,13 +191,13 @@ export default function BlogDetails() {
                           href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
                             `${
                               process.env.NEXT_PUBLIC_BASE_URL ||
-                              "http://localhost:3000"
+                              'http://localhost:3000'
                             }/article/${item.slug}`
                           )}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target='_blank'
+                          rel='noopener noreferrer'
                         >
-                          <i className="fab fa-linkedin-in" />
+                          <i className='fab fa-linkedin-in' />
                         </Link>
                       </li>
                       <li>
@@ -271,66 +205,66 @@ export default function BlogDetails() {
                           href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
                             `${
                               process.env.NEXT_PUBLIC_BASE_URL ||
-                              "http://localhost:3000"
+                              'http://localhost:3000'
                             }/article/${item.slug}`
                           )}&media=${encodeURIComponent(
                             `${
                               process.env.NEXT_PUBLIC_BASE_URL ||
-                              "http://localhost:3000"
+                              'http://localhost:3000'
                             }/assets/img/${item.group}/${item.img}`
                           )}&description=${encodeURIComponent(item.title)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                          target='_blank'
+                          rel='noopener noreferrer'
                         >
-                          <i className="fab fa-pinterest" />
+                          <i className='fab fa-pinterest' />
                         </Link>
                       </li>
                       <li>
                         <Link
-                          href="#"
-                          onClick={(e) => {
+                          href='#'
+                          onClick={e => {
                             e.preventDefault();
                             if (navigator.share) {
                               navigator.share({
                                 title: item.title,
                                 text:
                                   item.excerpt ||
-                                  item.content?.substring(0, 160) + "...",
+                                  item.content?.substring(0, 160) + '...',
                                 url: `${
                                   process.env.NEXT_PUBLIC_BASE_URL ||
-                                  "http://localhost:3000"
+                                  'http://localhost:3000'
                                 }/article/${item.slug}`,
                               });
                             } else {
                               navigator.clipboard.writeText(
                                 `${
                                   process.env.NEXT_PUBLIC_BASE_URL ||
-                                  "http://localhost:3000"
+                                  'http://localhost:3000'
                                 }/article/${item.slug}`
                               );
-                              alert("Link copied to clipboard!");
+                              alert('Link copied to clipboard!');
                             }
                           }}
                         >
-                          <i className="fas fa-share" />
+                          <i className='fas fa-share' />
                         </Link>
                       </li>
                     </ul>
                   </div>
                 </div>
-                <div className="col-xl-8 col-lg-7">
-                  <div className="blog-details-wrap">
-                    <ul className="tgbanner__content-meta list-wrap">
-                      <li className="category">
+                <div className='col-xl-8 col-lg-7'>
+                  <div className='blog-details-wrap'>
+                    <ul className='tgbanner__content-meta list-wrap'>
+                      <li className='category'>
                         <Link href={`/${item.category.toLowerCase()}`}>
                           {item.category}
                         </Link>
                       </li>
                       <li>
-                        <span className="by">By</span>{" "}
+                        <span className='by'>By</span>{' '}
                         <Link
                           href={`/author/${item.author
-                            .replace(" ", "-")
+                            .replace(' ', '-')
                             .toLowerCase()}`}
                         >
                           {item.author}
@@ -339,24 +273,29 @@ export default function BlogDetails() {
                       <li>{item.date}</li>
                       <li>{Math.floor(Math.random() * 50) + 1} comments</li>
                     </ul>
-                    <h2 className="title">{item.title}</h2>
-                    <div className="blog-details-thumb">
+                    <h2 className='title'>{item.title}</h2>
+                    <div className='blog-details-thumb'>
                       <img
                         src={`/assets/img/${item.group}/${item.img}`}
                         alt={item.title}
-                        style={{ width: "100%" }}
+                        style={{ width: '100%' }}
                       />
                     </div>
-                    <div className="blog-details-content">
+                    <div className='blog-details-content'>
                       {item.excerpt && (
-                        <div className="article-excerpt mb-4">
-                          <p className="lead">{item.excerpt}</p>
+                        <div className='article-excerpt mb-4'>
+                          <p className='lead'>{item.excerpt}</p>
                         </div>
                       )}
 
-                      {/* Dynamic content with ads */}
+                      {/* Premium Badge */}
+                      <PremiumBadge isPremium={item.isPremium} />
+
+                      {/* Dynamic content with ads and paywall */}
                       {item.content ? (
-                        renderContentWithAds(item.content)
+                        <Paywall isPremium={item.isPremium} content={item.content}>
+                          {renderContentWithAds(item.content, item.isPremium)}
+                        </Paywall>
                       ) : (
                         <div>
                           <p>
@@ -368,15 +307,15 @@ export default function BlogDetails() {
                             comprehensive new sustainability.
                           </p>
 
-                          <div className="content-ad my-4">
-                            <div className="ad-container text-center p-4 bg-light border rounded">
-                              <div className="ad-placeholder">
-                                <h6 className="text-muted mb-2">
+                          <div className='content-ad my-4'>
+                            <div className='ad-container text-center p-4 bg-light border rounded'>
+                              <div className='ad-placeholder'>
+                                <h6 className='text-muted mb-2'>
                                   Advertisement
                                 </h6>
-                                <div className="ad-content bg-white border p-3 rounded">
-                                  <p className="mb-2">Sponsored Content</p>
-                                  <small className="text-muted">
+                                <div className='ad-content bg-white border p-3 rounded'>
+                                  <p className='mb-2'>Sponsored Content</p>
+                                  <small className='text-muted'>
                                     Your ad could be here
                                   </small>
                                 </div>
@@ -395,15 +334,15 @@ export default function BlogDetails() {
                             change.
                           </p>
 
-                          <div className="content-ad my-4">
-                            <div className="ad-container text-center p-4 bg-light border rounded">
-                              <div className="ad-placeholder">
-                                <h6 className="text-muted mb-2">
+                          <div className='content-ad my-4'>
+                            <div className='ad-container text-center p-4 bg-light border rounded'>
+                              <div className='ad-placeholder'>
+                                <h6 className='text-muted mb-2'>
                                   Advertisement
                                 </h6>
-                                <div className="ad-content bg-white border p-3 rounded">
-                                  <p className="mb-2">Sponsored Content</p>
-                                  <small className="text-muted">
+                                <div className='ad-content bg-white border p-3 rounded'>
+                                  <p className='mb-2'>Sponsored Content</p>
+                                  <small className='text-muted'>
                                     Your ad could be here
                                   </small>
                                 </div>
@@ -431,8 +370,8 @@ export default function BlogDetails() {
                           </p>
                         </div>
                       )}
-                      <div className="blog-details-inner">
-                        <h3 className="inner-title">
+                      <div className='blog-details-inner'>
+                        <h3 className='inner-title'>
                           Building the Future of Artificial Intelligence
                         </h3>
                         <p>
@@ -444,29 +383,29 @@ export default function BlogDetails() {
                           just our values but a broader sense of how businesses
                           can contribute to fighting climate change.
                         </p>
-                        <div className="blog-details-images">
-                          <div className="row">
-                            <div className="col-md-4 col-sm-6">
-                              <div className="details-inner-image">
+                        <div className='blog-details-images'>
+                          <div className='row'>
+                            <div className='col-md-4 col-sm-6'>
+                              <div className='details-inner-image'>
                                 <img
-                                  src="/assets/img/lifestyle/life_style02.jpg"
-                                  alt="img"
+                                  src='/assets/img/lifestyle/life_style02.jpg'
+                                  alt='img'
                                 />
                               </div>
                             </div>
-                            <div className="col-md-4 col-sm-6">
-                              <div className="details-inner-image">
+                            <div className='col-md-4 col-sm-6'>
+                              <div className='details-inner-image'>
                                 <img
-                                  src="/assets/img/lifestyle/life_style03.jpg"
-                                  alt="img"
+                                  src='/assets/img/lifestyle/life_style03.jpg'
+                                  alt='img'
                                 />
                               </div>
                             </div>
-                            <div className="col-md-4 col-sm-6">
-                              <div className="details-inner-image">
+                            <div className='col-md-4 col-sm-6'>
+                              <div className='details-inner-image'>
                                 <img
-                                  src="/assets/img/lifestyle/life_style04.jpg"
-                                  alt="img"
+                                  src='/assets/img/lifestyle/life_style04.jpg'
+                                  alt='img'
                                 />
                               </div>
                             </div>
@@ -491,11 +430,11 @@ export default function BlogDetails() {
                           iMac. It set Apple on a new course and forever changed
                           the way people look at computers. "
                         </p>
-                        <div className="blockquote-cite">
-                          <div className="image">
-                            <img src="/assets/img/others/about_me.png" alt="" />
+                        <div className='blockquote-cite'>
+                          <div className='image'>
+                            <img src='/assets/img/others/about_me.png' alt='' />
                           </div>
-                          <div className="info">
+                          <div className='info'>
                             <h5>Miranda H. Halim</h5>
                             <span>Head Of Idea</span>
                           </div>
@@ -517,15 +456,15 @@ export default function BlogDetails() {
                         world, as well as the usage tied to its ech
                         infrastructure including our cloud computing services.
                       </p>
-                      <div className="blog-details-inner">
-                        <h3 className="inner-title">The Creative Cloud</h3>
+                      <div className='blog-details-inner'>
+                        <h3 className='inner-title'>The Creative Cloud</h3>
                         <p>
                           When we signed on to the To Whom It May Concern
                           campaign we made a pledge to be 100% renewable by 2030
                           and carbon zero by 2040," said Envato CEO Hichame
                           Assi..
                         </p>
-                        <ul className="list-wrap">
+                        <ul className='list-wrap'>
                           <li>
                             <span>The games generate:</span>Revenue through
                             sales of digital items, such as special costumes,
@@ -556,11 +495,11 @@ export default function BlogDetails() {
                         services lexibly around the world.
                       </p>
                     </div>
-                    <div className="blog-details-bottom">
-                      <div className="row align-items-baseline">
-                        <div className="col-xl-6 col-md-7">
-                          <div className="blog-details-tags">
-                            <ul className="list-wrap mb-0">
+                    <div className='blog-details-bottom'>
+                      <div className='row align-items-baseline'>
+                        <div className='col-xl-6 col-md-7'>
+                          <div className='blog-details-tags'>
+                            <ul className='list-wrap mb-0'>
                               {item.tags &&
                                 item.tags.map((tag, index) => (
                                   <li key={index}>
@@ -572,37 +511,37 @@ export default function BlogDetails() {
                               {(!item.tags || item.tags.length === 0) && (
                                 <>
                                   <li>
-                                    <Link href="#">
+                                    <Link href='#'>
                                       {item.category.toLowerCase()}
                                     </Link>
                                   </li>
                                   <li>
-                                    <Link href="#">{item.group}</Link>
+                                    <Link href='#'>{item.group}</Link>
                                   </li>
                                   <li>
-                                    <Link href="#">news</Link>
+                                    <Link href='#'>news</Link>
                                   </li>
                                 </>
                               )}
                             </ul>
                           </div>
                         </div>
-                        <div className="col-xl-6 col-md-5">
-                          <div className="blog-details-share">
-                            <h6 className="share-title">Share Now:</h6>
-                            <ul className="list-wrap mb-0">
+                        <div className='col-xl-6 col-md-5'>
+                          <div className='blog-details-share'>
+                            <h6 className='share-title'>Share Now:</h6>
+                            <ul className='list-wrap mb-0'>
                               <li>
                                 <Link
                                   href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
                                     `${
                                       process.env.NEXT_PUBLIC_BASE_URL ||
-                                      "http://localhost:3000"
+                                      'http://localhost:3000'
                                     }/article/${item.slug}`
                                   )}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  target='_blank'
+                                  rel='noopener noreferrer'
                                 >
-                                  <i className="fab fa-facebook-f" />
+                                  <i className='fab fa-facebook-f' />
                                 </Link>
                               </li>
                               <li>
@@ -612,13 +551,13 @@ export default function BlogDetails() {
                                   )}&url=${encodeURIComponent(
                                     `${
                                       process.env.NEXT_PUBLIC_BASE_URL ||
-                                      "http://localhost:3000"
+                                      'http://localhost:3000'
                                     }/article/${item.slug}`
                                   )}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  target='_blank'
+                                  rel='noopener noreferrer'
                                 >
-                                  <i className="fab fa-twitter" />
+                                  <i className='fab fa-twitter' />
                                 </Link>
                               </li>
                               <li>
@@ -626,13 +565,13 @@ export default function BlogDetails() {
                                   href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
                                     `${
                                       process.env.NEXT_PUBLIC_BASE_URL ||
-                                      "http://localhost:3000"
+                                      'http://localhost:3000'
                                     }/article/${item.slug}`
                                   )}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  target='_blank'
+                                  rel='noopener noreferrer'
                                 >
-                                  <i className="fab fa-linkedin-in" />
+                                  <i className='fab fa-linkedin-in' />
                                 </Link>
                               </li>
                               <li>
@@ -640,26 +579,26 @@ export default function BlogDetails() {
                                   href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(
                                     `${
                                       process.env.NEXT_PUBLIC_BASE_URL ||
-                                      "http://localhost:3000"
+                                      'http://localhost:3000'
                                     }/article/${item.slug}`
                                   )}&media=${encodeURIComponent(
                                     `${
                                       process.env.NEXT_PUBLIC_BASE_URL ||
-                                      "http://localhost:3000"
+                                      'http://localhost:3000'
                                     }/assets/img/${item.group}/${item.img}`
                                   )}&description=${encodeURIComponent(
                                     item.title
                                   )}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                                  target='_blank'
+                                  rel='noopener noreferrer'
                                 >
-                                  <i className="fab fa-pinterest" />
+                                  <i className='fab fa-pinterest' />
                                 </Link>
                               </li>
                               <li>
                                 <Link
-                                  href="#"
-                                  onClick={(e) => {
+                                  href='#'
+                                  onClick={e => {
                                     e.preventDefault();
                                     if (navigator.share) {
                                       navigator.share({
@@ -667,24 +606,24 @@ export default function BlogDetails() {
                                         text:
                                           item.excerpt ||
                                           item.content?.substring(0, 160) +
-                                            "...",
+                                            '...',
                                         url: `${
                                           process.env.NEXT_PUBLIC_BASE_URL ||
-                                          "http://localhost:3000"
+                                          'http://localhost:3000'
                                         }/article/${item.slug}`,
                                       });
                                     } else {
                                       navigator.clipboard.writeText(
                                         `${
                                           process.env.NEXT_PUBLIC_BASE_URL ||
-                                          "http://localhost:3000"
+                                          'http://localhost:3000'
                                         }/article/${item.slug}`
                                       );
-                                      alert("Link copied to clipboard!");
+                                      alert('Link copied to clipboard!');
                                     }
                                   }}
                                 >
-                                  <i className="fas fa-share" />
+                                  <i className='fas fa-share' />
                                 </Link>
                               </li>
                             </ul>
@@ -714,12 +653,12 @@ export default function BlogDetails() {
                           <span className="designation">OG Author</span>
                         </div>
                       </div> */}
-                    <div className="blog-prev-next-posts">
-                      <div className="row">
-                        <div className="col-xl-6 col-lg-8 col-md-6">
+                    <div className='blog-prev-next-posts'>
+                      <div className='row'>
+                        <div className='col-xl-6 col-lg-8 col-md-6'>
                           {adjacentArticles.prev && (
-                            <div className="pn-post-item">
-                              <div className="thumb">
+                            <div className='pn-post-item'>
+                              <div className='thumb'>
                                 <Link
                                   href={`/article/${
                                     adjacentArticles.prev.slug ||
@@ -732,9 +671,9 @@ export default function BlogDetails() {
                                   />
                                 </Link>
                               </div>
-                              <div className="content">
+                              <div className='content'>
                                 <span>Prev Post</span>
-                                <h5 className="title tgcommon__hover">
+                                <h5 className='title tgcommon__hover'>
                                   <Link
                                     href={`/article/${
                                       adjacentArticles.prev.slug ||
@@ -748,10 +687,10 @@ export default function BlogDetails() {
                             </div>
                           )}
                         </div>
-                        <div className="col-xl-6 col-lg-8 col-md-6">
+                        <div className='col-xl-6 col-lg-8 col-md-6'>
                           {adjacentArticles.next && (
-                            <div className="pn-post-item next-post">
-                              <div className="thumb">
+                            <div className='pn-post-item next-post'>
+                              <div className='thumb'>
                                 <Link
                                   href={`/article/${
                                     adjacentArticles.next.slug ||
@@ -764,9 +703,9 @@ export default function BlogDetails() {
                                   />
                                 </Link>
                               </div>
-                              <div className="content">
+                              <div className='content'>
                                 <span>Next Post</span>
-                                <h5 className="title tgcommon__hover">
+                                <h5 className='title tgcommon__hover'>
                                   <Link
                                     href={`/article/${
                                       adjacentArticles.next.slug ||
@@ -784,7 +723,15 @@ export default function BlogDetails() {
                     </div>
                   </div>
                 </div>
-                <div className="col-xl-3 col-lg-4 col-md-6">
+                <div className='col-xl-3 col-lg-4 col-md-6'>
+                  {/* Sidebar Ad */}
+                  <AdBlock 
+                    type="sidebar" 
+                    id="article-sidebar-ad"
+                    slot={`article-${slug}-sidebar`}
+                    className="mb-4"
+                  />
+                  
                   <ArticleSidebar
                     relatedArticles={relatedArticles}
                     currentArticle={item}
@@ -795,6 +742,6 @@ export default function BlogDetails() {
           </section>
         </>
       </Layout>
-    </>
+    </ErrorBoundary>
   );
 }

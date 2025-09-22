@@ -5,6 +5,7 @@
 ===============================*/
 .header__top {
     padding: 40px 0 23px;
+    background: var(--tg-common-color-white);
     @media #{$lg} {
         padding: 25px 0 25px;
     }
@@ -295,6 +296,7 @@
         border-top: 1px solid var(--tg-border-1);
         border-bottom: 1px solid var(--tg-border-1);
         padding: 0 20px;
+        background: var(--tg-common-color-white);
         @media #{$md} {
             @include flexbox();
             padding: 17px 0;
@@ -593,7 +595,7 @@
 	top: 0;
 	width: 100%;
 	z-index: 99;
-	background: var(--tg-common-color-gray);
+	background: var(--tg-common-color-white);
 	-webkit-animation: 1000ms ease-in-out 0s normal none 1 running fadeInDown;
 	animation: 1000ms ease-in-out 0s normal none 1 running fadeInDown;
 	-webkit-box-shadow: 0 10px 15px rgba(25, 25, 25, 0.1);

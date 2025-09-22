@@ -1,15 +1,20 @@
-import LatestSidebar from "@/components/elements/LatestSidebar";
-import Layout from "@/components/layout/Layout";
-import data from "@/util/blogData";
-import Link from "next/link";
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/router";
-import { generateSlug } from "@/util/articleUtils";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
+import LatestSidebar from '@/components/elements/LatestSidebar';
+import Layout from '@/components/layout/Layout';
+import PageErrorBoundary from '@/components/common/PageErrorBoundary';
+import { ArticleCardSkeleton } from '@/components/common/SkeletonLoaders';
+import { AdBlockBannerPackage } from '@/components/common/AdBlockBannerPackage';
+import AdBlock from '@/components/ads/AdBlock';
+import PremiumBadge from '@/components/common/PremiumBadge';
+import data from '@/util/blogData';
+import { generateSlug } from '@/util/articleUtils';
 import {
   getCategoryLink,
   getAuthorLink,
   getArticleLink,
-} from "@/util/urlUtils";
+} from '@/util/urlUtils';
 import {
   PAGINATION_CONFIG,
   LAYOUT_CONFIG,
@@ -17,7 +22,7 @@ import {
   SECTION_CONFIG,
   BUTTON_CONFIG,
   LOADING_CONFIG,
-} from "@/constants/main";
+} from '@/constants/main';
 
 export default function LatestPage() {
   const router = useRouter();
@@ -44,7 +49,7 @@ export default function LatestPage() {
         setIsInitialized(true);
       } else {
         // Invalid page number - redirect to /latest-news
-        router.replace("/latest-news");
+        router.replace('/latest-news');
         return;
       }
     } else {
@@ -62,7 +67,7 @@ export default function LatestPage() {
 
   // Function to load data for a specific page
   const loadPageData = useCallback(
-    (pageNum) => {
+    pageNum => {
       setLoading(true);
       setError(null);
 
@@ -76,14 +81,14 @@ export default function LatestPage() {
           setDisplayedData(pageData);
         } else {
           // Subsequent pages - append data
-          setDisplayedData((prev) => [...prev, ...pageData]);
+          setDisplayedData(prev => [...prev, ...pageData]);
         }
 
         // Check if there's more data
         setHasMore(endIndex < data.length);
       } catch (err) {
-        setError("Failed to load articles");
-        console.error("Error loading data:", err);
+        setError('Failed to load articles');
+        console.error('Error loading data:', err);
       } finally {
         setLoading(false);
       }
@@ -113,19 +118,19 @@ export default function LatestPage() {
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [displayedData.length, pagination, router]);
 
   // Function to generate description for articles that don't have one
-  const generateDescription = (article) => {
+  const generateDescription = article => {
     // You can customize this logic based on your needs
     const descriptions = [
-      "Discover the latest insights and trends in this fascinating topic.",
-      "Explore new perspectives and cutting-edge developments in this field.",
-      "Learn about the most recent updates and innovations in this area.",
-      "Stay informed with the latest news and analysis on this subject.",
-      "Get the inside scoop on recent developments and future prospects.",
+      'Discover the latest insights and trends in this fascinating topic.',
+      'Explore new perspectives and cutting-edge developments in this field.',
+      'Learn about the most recent updates and innovations in this area.',
+      'Stay informed with the latest news and analysis on this subject.',
+      'Get the inside scoop on recent developments and future prospects.',
     ];
 
     // Use article ID to consistently assign descriptions
@@ -144,14 +149,14 @@ export default function LatestPage() {
       >
         <section className={SECTION_CONFIG.LATEST_POST_AREA}>
           <div className={GRID_CONFIG.CONTAINER_DEFAULT}>
-            <div className="text-center">
+            <div className='text-center'>
               <div
                 className={`${LOADING_CONFIG.SPINNER_DEFAULT} text-primary`}
-                role="status"
+                role='status'
               >
-                <span className="visually-hidden">Loading...</span>
+                <span className='visually-hidden'>Loading...</span>
               </div>
-              <p className="mt-3">Loading latest news...</p>
+              <p className='mt-3'>Loading latest news...</p>
             </div>
           </div>
         </section>
@@ -160,25 +165,31 @@ export default function LatestPage() {
   }
 
   return (
-    <>
+    <PageErrorBoundary pageName='latest news page'>
       <Layout
         headerStyle={LAYOUT_CONFIG.HEADER_STYLE_LATEST}
         footerStyle={LAYOUT_CONFIG.FOOTER_STYLE_LATEST}
         footerClass={LAYOUT_CONFIG.FOOTER_CLASS_LATEST}
         logoWhite={LAYOUT_CONFIG.LOGO_WHITE_LATEST}
       >
+        {/* AdBlock Warning Banner */}
+        <AdBlockBannerPackage
+          message='Stay updated with the latest news. Please consider disabling your ad blocker to support our journalism.'
+          onDismiss={() => console.log('Latest news banner dismissed')}
+        />
+
         <section className={SECTION_CONFIG.LATEST_POST_AREA}>
           <div className={GRID_CONFIG.CONTAINER_DEFAULT}>
             <div className={GRID_CONFIG.ROW_CENTER}>
               <div className={GRID_CONFIG.MAIN_CONTENT_COL}>
-                <div className="section__title-wrap mb-40">
-                  <div className="row align-items-end">
-                    <div className="col-sm-6">
-                      <div className="section__title">
-                        <span className="section__sub-title">Latest</span>
-                        <h3 className="section__main-title">Latest News</h3>
+                <div className='section__title-wrap mb-40'>
+                  <div className='row align-items-end'>
+                    <div className='col-sm-6'>
+                      <div className='section__title'>
+                        <span className='section__sub-title'>Latest</span>
+                        <h3 className='section__main-title'>Latest News</h3>
                         {currentPage > 1 && (
-                          <p className="section__description">
+                          <p className='section__description'>
                             Showing page {currentPage} of {totalPages}(
                             {displayedData.length} of {data.length} articles)
                           </p>
@@ -190,10 +201,10 @@ export default function LatestPage() {
 
                 {/* Error State */}
                 {error && (
-                  <div className="alert alert-danger" role="alert">
+                  <div className='alert alert-danger' role='alert'>
                     {error}
                     <button
-                      className="btn btn-sm btn-outline-danger ms-2"
+                      className='btn btn-sm btn-outline-danger ms-2'
                       onClick={() => loadPageData(currentPage)}
                     >
                       Retry
@@ -202,12 +213,12 @@ export default function LatestPage() {
                 )}
 
                 {/* Articles List */}
-                <div className="latest__post-wrap">
+                <div className='latest__post-wrap'>
                   {displayedData.length === 0 && !loading && (
-                    <div className="text-center py-5">
-                      <p className="text-muted">No articles found.</p>
+                    <div className='text-center py-5'>
+                      <p className='text-muted'>No articles found.</p>
                       <Link
-                        href="/latest-news"
+                        href='/latest-news'
                         className={BUTTON_CONFIG.BTN_SECONDARY}
                       >
                         Back to Latest News
@@ -215,25 +226,26 @@ export default function LatestPage() {
                     </div>
                   )}
                   {displayedData.map((item, i) => (
-                    <div className="latest__post-item" key={`${item.id}-${i}`}>
-                      <div className="latest__post-thumb tgImage__hover">
+                    <React.Fragment key={`${item.id}-${i}`}>
+                      <div className='latest__post-item'>
+                      <div className='latest__post-thumb tgImage__hover'>
                         <Link href={getArticleLink(item)}>
                           <img
                             src={`/assets/img/${item.group}/${item.img}`}
                             alt={item.title}
-                            loading="lazy"
+                            loading='lazy'
                           />
                         </Link>
                       </div>
-                      <div className="latest__post-content">
-                        <ul className="tgbanner__content-meta list-wrap">
-                          <li className="category">
+                      <div className='latest__post-content'>
+                        <ul className='tgbanner__content-meta list-wrap'>
+                          <li className='category'>
                             <Link href={getCategoryLink(item.category)}>
                               {item.category.toLowerCase()}
                             </Link>
                           </li>
                           <li>
-                            <span className="by">By</span>{" "}
+                            <span className='by'>By</span>{' '}
                             <Link href={getAuthorLink(item.author)}>
                               {item.author}
                             </Link>
@@ -241,76 +253,88 @@ export default function LatestPage() {
                           <li>{item.date}</li>
                           {item.trending && (
                             <li>
-                              <span className="trending-badge">
+                              <span className='trending-badge'>
                                 🔥 Trending
                               </span>
                             </li>
                           )}
+                          <li>
+                            <PremiumBadge isPremium={item.isPremium} />
+                          </li>
                         </ul>
-                        <h3 className="title tgcommon__hover">
+                        <h3 className='title tgcommon__hover'>
                           <Link href={getArticleLink(item)}>{item.title}</Link>
                         </h3>
                         <p>{generateDescription(item)}</p>
-                        <ul className="post__activity list-wrap">
+                        <ul className='post__activity list-wrap'>
                           <li>
-                            <i className="fal fa-signal" />{" "}
+                            <i className='fal fa-signal' />{' '}
                             {Math.floor(Math.random() * 5) + 1}k
                           </li>
                           <li>
                             <Link href={getArticleLink(item)}>
-                              <i className="fal fa-comment-dots" />{" "}
+                              <i className='fal fa-comment-dots' />{' '}
                               {Math.floor(Math.random() * 100) + 50}
                             </Link>
                           </li>
                           <li>
-                            <i className="fal fa-share-alt" />{" "}
+                            <i className='fal fa-share-alt' />{' '}
                             {Math.floor(Math.random() * 20) + 10}
                           </li>
                         </ul>
                       </div>
                     </div>
+                    {/* Show ad after every 5 articles */}
+                    {(i + 1) % 5 === 0 && (
+                      <AdBlock 
+                        type="block" 
+                        id={`latest-ad-${Math.floor(i / 5)}`}
+                        slot={`latest-news-ad-${Math.floor(i / 5)}`}
+                      />
+                    )}
+                    </React.Fragment>
                   ))}
                 </div>
 
                 {/* Loading State */}
                 {loading && (
-                  <div className="text-center py-4">
+                  <div className='text-center py-4'>
                     <div
                       className={`${LOADING_CONFIG.SPINNER_DEFAULT} text-primary`}
-                      role="status"
+                      role='status'
                     >
-                      <span className="visually-hidden">Loading...</span>
+                      <span className='visually-hidden'>Loading...</span>
                     </div>
-                    <p className="mt-2">Loading more articles...</p>
+                    <p className='mt-2'>Loading more articles...</p>
                   </div>
                 )}
 
                 {/* Load More Button */}
                 {hasMore && !loading && (
-                  <div className="latest__post-more text-center">
+                  <div className='latest__post-more text-center'>
                     <button
                       className={BUTTON_CONFIG.BTN_PRIMARY}
                       onClick={handleLoadMore}
                       disabled={loading}
                     >
-                      <span className="text">
-                        {loading ? "Loading..." : "Load More"}
+                      <span className='text'>
+                        {loading ? 'Loading...' : 'Load More'}
                       </span>
-                      <i className="far fa-plus" />
+                      <i className='far fa-plus' />
                     </button>
                   </div>
                 )}
 
                 {/* No More Data */}
                 {!hasMore && displayedData.length > 0 && (
-                  <div className="latest__post-more text-center">
-                    <p className="text-muted">
-                      You've reached the end! Showing all {data.length}{" "}
+                  <div className='latest__post-more text-center'>
+                    <p className='text-muted'>
+                      You've reached the end! Showing all {data.length}{' '}
                       articles.
                     </p>
                     <Link
-                      href="/latest-news"
-                      className="btn btn-outline-primary"
+                      href='/latest-news'
+                      className='btn btn-outline-primary'
                     >
                       Back to First Page
                     </Link>
@@ -319,10 +343,10 @@ export default function LatestPage() {
 
                 {/* Pagination Info */}
                 {displayedData.length > 0 && (
-                  <div className="pagination-info text-center mt-4">
-                    <small className="text-muted">
-                      Page {currentPage} of {totalPages} | Showing{" "}
-                      {displayedData.length} articles | Total: {data.length}{" "}
+                  <div className='pagination-info text-center mt-4'>
+                    <small className='text-muted'>
+                      Page {currentPage} of {totalPages} | Showing{' '}
+                      {displayedData.length} articles | Total: {data.length}{' '}
                       articles
                     </small>
                   </div>
@@ -336,6 +360,6 @@ export default function LatestPage() {
           </div>
         </section>
       </Layout>
-    </>
+    </PageErrorBoundary>
   );
 }

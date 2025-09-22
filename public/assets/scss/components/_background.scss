@@ -12,3 +12,94 @@
 .black-bg {
 	background: var(--tg-common-color-black);
 }
+
+/* Light mode overrides to ensure proper backgrounds */
+.light-theme {
+    & .white-bg {
+        background: var(--tg-common-color-white) !important;
+    }
+    & .header__top {
+        background: var(--tg-common-color-white) !important;
+    }
+    & .sticky-menu {
+        background: var(--tg-common-color-white) !important;
+    }
+    & .tgmenu__wrap {
+        background: var(--tg-common-color-white) !important;
+        border-color: var(--tg-border-1) !important;
+    }
+    & .tgmenu__navbar-wrap ul li a {
+        color: var(--tg-heading-color) !important;
+        &:hover {
+            color: var(--tg-theme-primary) !important;
+        }
+    }
+    & .tgmenu__action ul li a {
+        color: var(--tg-heading-color) !important;
+        &:hover {
+            color: var(--tg-theme-primary) !important;
+        }
+    }
+    & .section__title-wrap {
+        background: transparent !important;
+    }
+    & .popular__post-area,
+    & .featured__post-area,
+    & .banner__grid-area,
+    & .nft__post-area,
+    & .interior__post-area,
+    & .handpicked__posts-area,
+    & .tgbanner__area,
+    & .tgbanner__area-three,
+    & .trending-post-area,
+    & .stories-post-area,
+    & .category__area,
+    & .newsletter-area,
+    & .slider__area,
+    & .tgslider__area-four {
+        background: var(--tg-common-color-white) !important;
+    }
+    /* Ensure sections without explicit background are white */
+    & section:not(.black-bg):not(.dark-bg) {
+        background: var(--tg-common-color-white) !important;
+    }
+    /* Override any dark backgrounds that might be applied */
+    & .tgbanner__content,
+    & .trending__post-content,
+    & .featured__content,
+    & .handpicked__content {
+        background: transparent !important;
+    }
+    /* Override slider styles in light mode */
+    & .slider__style-two {
+        background: var(--tg-common-color-white) !important;
+        color: var(--tg-heading-color) !important;
+    }
+    & .slider__style-two .slider__item {
+        background: var(--tg-common-color-white) !important;
+    }
+    /* Ensure all section areas are white unless explicitly dark */
+    & .tgbanner__area,
+    & .tgbanner__area-three,
+    & .trending__banner-area,
+    & .trending-post-area,
+    & .stories__area,
+    & .category__area,
+    & .newsletter__area,
+    & .slider__area {
+        background: var(--tg-common-color-white) !important;
+    }
+    /* Force override any remaining dark backgrounds */
+    & *:not(.black-bg):not(.dark-bg) {
+        &[style*="background"] {
+            background: var(--tg-common-color-white) !important;
+        }
+    }
+    /* Specific overrides for common dark elements */
+    & .tgbanner__post,
+    & .trending__post,
+    & .featured__post,
+    & .handpicked__item {
+        background: transparent !important;
+    }
+}

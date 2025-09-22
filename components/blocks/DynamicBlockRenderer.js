@@ -1,4 +1,7 @@
 // Import all block components directly
+import React from "react";
+import ErrorBoundary from "@/components/common/ErrorBoundary";
+import AdBlock from "@/components/ads/AdBlock";
 import HeroBanner from "./sections/HeroBanner";
 import BannerGrid from "./sections/BannerGrid";
 import NftSliderSection from "./sections/NftSliderSection";
@@ -40,7 +43,7 @@ const DynamicBlockRenderer = ({ blocks }) => {
     return null;
   }
 
-  const renderBlock = (block) => {
+  const renderBlock = (block, index) => {
     // Skip if block is null or undefined
     if (!block) {
       return null;
@@ -52,12 +55,27 @@ const DynamicBlockRenderer = ({ blocks }) => {
       return null;
     }
 
+    // Skip ads for hero banner and newsletter sections
+    const skipAdBlocks = ['hero-banner', 'newsletter-section', 'newsletter-style-two'];
+    const shouldShowAd = !skipAdBlocks.includes(block.block_name);
+
     return (
-      <BlockComponent key={block.title || block.block_name} blockData={block} />
+      <React.Fragment key={block.title || block.block_name || index}>
+        <ErrorBoundary>
+          <BlockComponent blockData={block} />
+        </ErrorBoundary>
+        {shouldShowAd && (
+          <AdBlock 
+            type="block" 
+            id={`home-block-${index}`}
+            slot={`home-block-${block.block_name}`}
+          />
+        )}
+      </React.Fragment>
     );
   };
 
-  return <>{blocks.map((block) => renderBlock(block))}</>;
+  return <>{blocks.map((block, index) => renderBlock(block, index))}</>;
 };
 
 export default DynamicBlockRenderer;

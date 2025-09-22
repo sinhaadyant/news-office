@@ -21,6 +21,42 @@
     & .sticky-menu {
         background-color: var(--tg-dark-color-1);
     }
+    & .tgmenu__wrap {
+        background-color: var(--tg-dark-color-1);
+        border-color: var(--tg-border-2);
+    }
+    & .tgmenu__navbar-wrap ul li a {
+        color: var(--tg-common-color-white);
+        &:hover {
+            color: var(--tg-theme-primary);
+        }
+    }
+    & .header__top {
+        background-color: var(--tg-dark-color-1);
+    }
+    & .header__top-search form input {
+        background-color: var(--tg-dark-color-2);
+        color: var(--tg-common-color-white);
+        &::placeholder {
+            color: var(--tg-body-color);
+        }
+    }
+    & .tgmenu__action ul li a {
+        color: var(--tg-common-color-white);
+        &:hover {
+            color: var(--tg-theme-primary);
+        }
+    }
+    & .header__top-right .lang .dropdown-toggle {
+        background-color: var(--tg-dark-color-2);
+        color: var(--tg-common-color-white);
+    }
+    & .header__top-right .btn {
+        color: var(--tg-common-color-white);
+        &:hover {
+            color: var(--tg-theme-primary);
+        }
+    }
     & .btn::before {
         background: var(--tg-dark-color-1);
     }
@@ -158,7 +194,6 @@
     & .tgAbout-me,
     & .sidebarInsta__wrap,
     & .header__top-bar,
-    & .white-bg,
     & .breadcrumb-content,
     & .blog-details-social ul li a,
     & .blog-details-tags ul li a {

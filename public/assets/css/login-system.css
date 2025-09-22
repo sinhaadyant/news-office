@@ -1,0 +1,413 @@
+/* Login System Styles - Theme Compatible */
+.login-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Ensure login button integrates with header styling */
+.header__top-right .list-wrap .login-btn {
+  margin-left: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .header__top-right .list-wrap .login-btn {
+    margin-left: 5px;
+    gap: 8px;
+  }
+}
+
+/* Theme-compatible button styles */
+.login-btn .login-button {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  border: medium none;
+  border-radius: 0;
+  color: var(--tg-common-color-white);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-bottom: 0;
+  padding: 12px 20px;
+  text-align: center;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  transition: all 0.3s ease;
+  vertical-align: middle;
+  white-space: nowrap;
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  min-width: 100px;
+}
+
+/* Free Login Button - Gray theme */
+.login-btn .login-button.free-login {
+  background: var(--tg-common-color-gray);
+  color: var(--tg-heading-color);
+}
+
+.login-btn .login-button.free-login::before {
+  content: "";
+  position: absolute;
+  transition-duration: 800ms;
+  width: 200%;
+  height: 200%;
+  top: 110%;
+  left: 50%;
+  background: var(--tg-theme-primary);
+  transform: translateX(-50%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.login-btn .login-button.free-login:hover {
+  color: var(--tg-common-color-white);
+}
+
+.login-btn .login-button.free-login:hover::before {
+  top: -40%;
+}
+
+/* Paid Login Button - Primary theme */
+.login-btn .login-button.paid-login {
+  background: var(--tg-theme-primary);
+  color: var(--tg-common-color-white);
+}
+
+.login-btn .login-button.paid-login::before {
+  content: "";
+  position: absolute;
+  transition-duration: 800ms;
+  width: 200%;
+  height: 200%;
+  top: 110%;
+  left: 50%;
+  background: var(--tg-theme-secondary);
+  transform: translateX(-50%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.login-btn .login-button.paid-login:hover {
+  color: var(--tg-common-color-white);
+}
+
+.login-btn .login-button.paid-login:hover::before {
+  top: -40%;
+}
+
+/* Logout Button - Red theme */
+.login-btn .login-button.logout-btn {
+  background: var(--tg-common-color-red);
+  color: var(--tg-common-color-white);
+}
+
+.login-btn .login-button.logout-btn::before {
+  content: "";
+  position: absolute;
+  transition-duration: 800ms;
+  width: 200%;
+  height: 200%;
+  top: 110%;
+  left: 50%;
+  background: var(--tg-theme-secondary);
+  transform: translateX(-50%);
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.login-btn .login-button.logout-btn:hover {
+  color: var(--tg-common-color-white);
+}
+
+.login-btn .login-button.logout-btn:hover::before {
+  top: -40%;
+}
+
+/* User status badge styling */
+.login-btn .user-badge {
+  padding: 8px 16px;
+  border-radius: 0;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+}
+
+.login-btn .user-badge.free-user {
+  background: var(--tg-common-color-gray);
+  color: var(--tg-heading-color);
+  border: 1px solid var(--tg-border-1);
+}
+
+.login-btn .user-badge.paid-user {
+  background: var(--tg-theme-primary);
+  color: var(--tg-common-color-white);
+  border: 1px solid var(--tg-theme-primary);
+}
+
+/* Focus states for accessibility */
+.login-btn .login-button:focus {
+  outline: 2px solid var(--tg-theme-primary);
+  outline-offset: 2px;
+}
+
+/* Dark mode support */
+.dark-theme .login-btn .user-badge.free-user {
+  background: var(--tg-dark-color-2);
+  color: var(--tg-common-color-white);
+  border-color: var(--tg-border-2);
+}
+
+.dark-theme .login-btn .login-button.free-login {
+  background: var(--tg-dark-color-2);
+  color: var(--tg-common-color-white);
+}
+
+.dark-theme .login-btn .login-button.free-login::before {
+  background: var(--tg-theme-primary);
+}
+
+/* =============================
+   Ads System Styles
+=============================== */
+.ad-block {
+  margin: 20px 0;
+  border: 1px solid var(--tg-border-1);
+  background: var(--tg-common-color-white);
+  position: relative;
+  overflow: hidden;
+}
+
+.ad-block--inline {
+  margin: 15px 0;
+  height: 90px;
+}
+
+.ad-block--sidebar {
+  margin: 20px 0;
+  height: 250px;
+  width: 300px;
+}
+
+.ad-block--block {
+  margin: 30px 0;
+  height: 250px;
+}
+
+.ad-skeleton {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ad-skeleton-content {
+  text-align: center;
+}
+
+.ad-skeleton-line {
+  height: 12px;
+  background: #ddd;
+  margin: 8px 20px;
+  border-radius: 6px;
+}
+
+.ad-skeleton-line.short {
+  width: 60%;
+  margin: 8px auto;
+}
+
+.ad-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--tg-common-color-gray);
+  position: relative;
+}
+
+.ad-label {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  font-size: 10px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.ad-placeholder {
+  text-align: center;
+  color: #666;
+}
+
+.ad-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.ad-text {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ad-slot {
+  font-size: 10px;
+  color: #999;
+  text-transform: uppercase;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* =============================
+   Paywall Styles
+=============================== */
+.paywall {
+  position: relative;
+  overflow: hidden;
+}
+
+.paywall-content {
+  position: relative;
+}
+
+.paywall-preview {
+  filter: blur(2px);
+  opacity: 0.6;
+  pointer-events: none;
+  user-select: none;
+}
+
+.paywall-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.paywall-message {
+  text-align: center;
+  padding: 40px 20px;
+  max-width: 400px;
+  background: var(--tg-common-color-white);
+  border: 1px solid var(--tg-border-1);
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.paywall-icon {
+  font-size: 48px;
+  color: var(--tg-theme-primary);
+  margin-bottom: 20px;
+}
+
+.paywall-message h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tg-heading-color);
+  margin-bottom: 15px;
+}
+
+.paywall-message p {
+  font-size: 16px;
+  color: var(--tg-body-color);
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.paywall-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* =============================
+   Premium Badge Styles
+=============================== */
+.premium-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.3);
+}
+
+.premium-badge i {
+  font-size: 10px;
+}
+
+/* Dark mode support */
+.dark-theme .paywall-overlay {
+  background: rgba(0, 0, 0, 0.95);
+}
+
+.dark-theme .paywall-message {
+  background: var(--tg-dark-color-1);
+  border-color: var(--tg-border-2);
+}
+
+.dark-theme .paywall-message h3 {
+  color: var(--tg-common-color-white);
+}
+
+.dark-theme .paywall-message p {
+  color: var(--tg-body-color);
+}
+
+.dark-theme .ad-block {
+  background: var(--tg-dark-color-1);
+  border-color: var(--tg-border-2);
+}
+
+.dark-theme .ad-content {
+  background: var(--tg-dark-color-2);
+}
+
+.dark-theme .ad-text {
+  color: var(--tg-common-color-white);
+}
+
+.dark-theme .ad-slot {
+  color: var(--tg-body-color);
+}

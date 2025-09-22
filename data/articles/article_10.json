@@ -6,5 +6,7 @@
   "trending": false,
   "category": "Tech",
   "author": "miranda h.",
-  "date": "25 April 2022"
+  "date": "25 April 2022",
+  "isPremium": true,
+  "content": "This is a premium tech article about experimental accessibility in connected communities. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
 }

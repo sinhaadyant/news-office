@@ -99,3 +99,4 @@ export const LOADING_CONFIG = {
   LOADING_MORE: "Loading more...",
   LOADING_ARTICLES: "Loading articles...",
 };
+
