@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Autoplay, Navigation, Pagination } from "swiper";
 import { generateSlug } from "@/util/articleUtils";
 import { getArticleLink } from "@/util/urlUtils";
+import PremiumBadge from "@/components/common/PremiumBadge";
 
 export default function TechnologySlider({ blockData }) {
   return (
@@ -36,6 +37,18 @@ export default function TechnologySlider({ blockData }) {
                     alt="img"
                   />
                 </Link>
+                <div className='badge-container'>
+                  <div className='badge-left'>
+                    {item.trending && (
+                      <div className='trending-badge'>
+                        <span>🔥</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className='badge-right'>
+                    <PremiumBadge isPremium={item.isPremium} />
+                  </div>
+                </div>
               </div>
               <div
                 className="tgslider__content"

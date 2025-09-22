@@ -83,7 +83,7 @@ const VideoPosts = ({ blockData }) => {
                 channel="youtube"
                 autoplay
                 isOpen={isOpen}
-                videoId="hAP2QF--2Dg"
+                videoId="V87lmIvrTSk"
                 onClose={() => setOpen(false)}
               />
             </div>

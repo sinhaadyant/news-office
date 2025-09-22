@@ -48,12 +48,18 @@ const ArticleCard = memo(
               className='article-card__image'
             />
           </Link>
-          {article.trending && (
-            <div className='trending-badge'>
-              <span>🔥 Trending</span>
+          <div className='badge-container'>
+            <div className='badge-left'>
+              {article.trending && (
+                <div className='trending-badge'>
+                  <span>🔥</span>
+                </div>
+              )}
             </div>
-          )}
-          <PremiumBadge isPremium={article.isPremium} />
+            <div className='badge-right'>
+              <PremiumBadge isPremium={article.isPremium} />
+            </div>
+          </div>
         </div>
 
         <div className='article-card__content'>

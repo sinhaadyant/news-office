@@ -10,6 +10,10 @@
 }
 .sidebar-widget {
     margin: 0 0 45px;
+    background-color: var(--tg-common-color-white);
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     &:last-child {
         margin: 0 0;
     }

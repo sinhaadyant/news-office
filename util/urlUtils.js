@@ -9,6 +9,8 @@
  * @returns {string} - Category URL
  */
 export const getCategoryLink = (category) => {
+  if (!category) return "/blog";
+  
   const categoryMap = {
     Gaming: "/gaming",
     Tech: "/technology",

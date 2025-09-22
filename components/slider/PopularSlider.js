@@ -1,13 +1,16 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import data from "@/util/blogData";
 import Link from "next/link";
 import { Autoplay, Navigation, Pagination } from "swiper";
 import { generateSlug } from "@/util/articleUtils";
-import { getArticleLink } from "@/util/urlUtils";
+import { getArticleLink, getCategoryLink, getAuthorLink } from "@/util/urlUtils";
+import PremiumBadge from "@/components/common/PremiumBadge";
+import ComponentErrorBoundary from "@/components/common/ComponentErrorBoundary";
 
-export default function PopularSlider() {
+export default function PopularSlider({ articles = [] }) {
+  // Ensure articles is an array
+  const safeArticles = Array.isArray(articles) ? articles : [];
   return (
-    <>
+    <ComponentErrorBoundary componentName="popular slider">
       <Swiper
         modules={[Autoplay, Pagination, Navigation]}
         slidesPerView={3}
@@ -49,7 +52,7 @@ export default function PopularSlider() {
         }}
         className="swiper-wrapper"
       >
-        {data.slice(34, 39).map((item, i) => (
+        {safeArticles.slice(0, 6).map((item, i) => (
           <SwiperSlide key={i}>
             <div className="trending__post">
               <div className="trending__post-thumb tgImage__hover">
@@ -64,11 +67,18 @@ export default function PopularSlider() {
                     alt="img"
                   />
                 </Link>
-                {item.trending && (
-                  <span className="is_trend">
-                    <i className="fas fa-bolt" />
-                  </span>
-                )}
+                <div className='badge-container'>
+                  <div className='badge-left'>
+                    {item.trending && (
+                      <div className='trending-badge'>
+                        <span>🔥</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className='badge-right'>
+                    <PremiumBadge isPremium={item.isPremium} />
+                  </div>
+                </div>
               </div>
               <div className="trending__post-content">
                 <ul className="tgbanner__content-meta list-wrap">
@@ -93,6 +103,6 @@ export default function PopularSlider() {
           </SwiperSlide>
         ))}
       </Swiper>
-    </>
+    </ComponentErrorBoundary>
   );
 }

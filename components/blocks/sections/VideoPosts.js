@@ -4,6 +4,7 @@ import ModalVideo from "react-modal-video";
 import data from "@/util/blogData";
 import { generateSlug } from "@/util/articleUtils";
 import { getArticleLink } from "@/util/urlUtils";
+import PremiumBadge from "@/components/common/PremiumBadge";
 
 export default function VideoPosts({ blockData }) {
   const [isOpen, setOpen] = useState(false);
@@ -38,8 +39,16 @@ export default function VideoPosts({ blockData }) {
                 <a onClick={() => setOpen(true)} className="popup-video">
                   <i className="fas fa-play" />
                 </a>
+                <div className='badge-container'>
+                  <div className='badge-left'>
+                    {/* Video posts can be trending */}
+                  </div>
+                  <div className='badge-right'>
+                    <PremiumBadge isPremium={true} />
+                  </div>
+                </div>
               </div>
-              <div className="video__post-content">
+                <div className="video__post-content">
                 <ul className="tgbanner__content-meta list-wrap">
                   <li className="category">
                     <Link href="/blog">technology</Link>
@@ -61,7 +70,7 @@ export default function VideoPosts({ blockData }) {
                 channel="youtube"
                 autoplay
                 isOpen={isOpen}
-                videoId="vfhzo499OeA"
+                videoId="V87lmIvrTSk"
                 onClose={() => setOpen(false)}
               />
             </div>
@@ -77,6 +86,14 @@ export default function VideoPosts({ blockData }) {
                     />
                     <i className="fas fa-play" />
                   </a>
+                  <div className='badge-container'>
+                    <div className='badge-left'>
+                      {/* Video posts can be trending */}
+                    </div>
+                    <div className='badge-right'>
+                      <PremiumBadge isPremium={true} />
+                    </div>
+                  </div>
                 </div>
                 <div className="video__post-content">
                   <ul className="tgbanner__content-meta list-wrap">

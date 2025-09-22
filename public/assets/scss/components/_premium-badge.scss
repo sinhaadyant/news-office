@@ -1,0 +1,267 @@
+// Badge Container for consistent positioning
+.badge-container {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  z-index: 3;
+  pointer-events: none;
+  
+  .badge-left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .badge-right {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+// Premium Badge Styles
+.premium-badge {
+  position: relative;
+  background: linear-gradient(135deg, #ffd700, #ffed4e);
+  color: #333;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: auto;
+  
+  i {
+    font-size: 10px;
+    color: #b8860b;
+  }
+  
+  // Hover effect
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+    transition: all 0.2s ease;
+  }
+  
+  // Animation for premium content
+  &::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
+    border-radius: 14px;
+    z-index: -1;
+    opacity: 0;
+    animation: premiumGlow 2s ease-in-out infinite;
+  }
+}
+
+// Trending Badge Styles (consistent with premium)
+.trending-badge {
+  position: relative;
+  background: linear-gradient(135deg, #ff6b35, #f7931e);
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: auto;
+  
+  span {
+    font-size: 10px;
+  }
+  
+  // Hover effect
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    transition: all 0.2s ease;
+  }
+}
+
+// Legacy trending badge (is_trend) - update to match new style
+.is_trend {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  width: auto !important;
+  height: auto !important;
+  background: linear-gradient(135deg, #ff6b35, #f7931e) !important;
+  color: #fff !important;
+  padding: 4px 8px !important;
+  border-radius: 12px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  pointer-events: auto !important;
+  
+  i {
+    font-size: 10px !important;
+    color: #fff !important;
+  }
+}
+
+// Premium glow animation
+@keyframes premiumGlow {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+// Badge positioning in different contexts
+.trending__post-thumb,
+.featured__thumb,
+.tgbanner__thumb,
+.handpicked__thumb,
+.tgslider__thumb,
+.video__post-thumb,
+.stories-post__thumb,
+.article-card__thumb {
+  position: relative;
+  
+  // Ensure badges are properly contained
+  .badge-container {
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+  
+  // Fallback for components not using badge-container
+  .premium-badge,
+  .trending-badge,
+  .is_trend {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+  
+  // When both badges are present, adjust positioning
+  .premium-badge + .trending-badge,
+  .trending-badge + .premium-badge,
+  .premium-badge + .is_trend,
+  .is_trend + .premium-badge {
+    top: 40px; // Stack badges vertically
+  }
+}
+
+// Premium badge in meta lists
+.tgbanner__content-meta,
+.latest__post-content .tgbanner__content-meta {
+  .premium-badge {
+    position: static;
+    display: inline-flex;
+    margin-left: 8px;
+    font-size: 10px;
+    padding: 2px 6px;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+    border-radius: 8px;
+    box-shadow: none;
+    
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// Dark theme support
+.dark-mode {
+  .premium-badge {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #1a1a1a;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+    
+    i {
+      color: #b8860b;
+    }
+  }
+}
+
+// Login button styles
+.login-section {
+  .login-form {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    min-width: 250px;
+    
+    .form-control {
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.user-menu {
+  .btn {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .badge-container {
+    top: 6px;
+    left: 6px;
+    right: 6px;
+  }
+  
+  .premium-badge,
+  .trending-badge {
+    font-size: 10px;
+    padding: 3px 6px;
+    
+    i, span {
+      font-size: 9px;
+    }
+  }
+  
+  // Stack badges vertically on very small screens
+  @media (max-width: 480px) {
+    .badge-container {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    
+    .badge-right {
+      align-self: flex-end;
+    }
+  }
+}

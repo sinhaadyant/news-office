@@ -7,15 +7,26 @@ import {
   getAuthorLink,
 } from '@/util/urlUtils';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
+import EmptyState from '@/components/common/EmptyState';
+import { useAuth } from '@/contexts/AuthContext';
+import { shouldShowPremiumBadge as fallbackShouldShowPremiumBadge } from '@/util/authUtils';
 
 const FeaturedPosts = memo(({ blockData }) => {
+  const authContext = useAuth();
+  const shouldShowPremiumBadge = authContext.shouldShowPremiumBadge || fallbackShouldShowPremiumBadge;
+  
   // Use blockData if available, otherwise fallback to static data
   const articles = useMemo(() => {
-    if (blockData?.articlesData && blockData.articlesData.length > 0) {
-      return blockData.articlesData;
+    try {
+      if (blockData?.articlesData && Array.isArray(blockData.articlesData) && blockData.articlesData.length > 0) {
+        return blockData.articlesData;
+      }
+      // Fallback to static data slice
+      return [];
+    } catch (error) {
+      console.error('Error processing articles in FeaturedPosts:', error);
+      return [];
     }
-    // Fallback to static data slice
-    return [];
   }, [blockData?.articlesData]);
 
   const sectionTitle = blockData?.section_title || 'Editor Choice';
@@ -27,9 +38,10 @@ const FeaturedPosts = memo(({ blockData }) => {
     return (
       <section className='featured-post-area section__hover-line pt-75'>
         <div className='container'>
-          <div className='text-center py-5'>
-            <p className='text-muted'>No featured posts available</p>
-          </div>
+          <EmptyState 
+            title="No Featured Posts"
+            message="No featured posts are available at the moment. Please check back later."
+          />
         </div>
       </section>
     );
@@ -80,16 +92,22 @@ const FeaturedPosts = memo(({ blockData }) => {
                     <div className='featured__thumb-number'>
                       {String(item.id).padStart(2, '0')}
                     </div>
-                    {item.trending && (
-                      <div className='trending-badge'>
-                        <span>🔥</span>
+                    <div className='badge-container'>
+                      <div className='badge-left'>
+                        {item.trending && (
+                          <div className='trending-badge'>
+                            <span>🔥</span>
+                          </div>
+                        )}
                       </div>
-                    )}
-                    {item.premium && (
-                      <div className='premium-badge'>
-                        <span>⭐</span>
+                      <div className='badge-right'>
+                        {shouldShowPremiumBadge(item.isPremium) && (
+                          <div className='premium-badge'>
+                            <span>⭐</span>
+                          </div>
+                        )}
                       </div>
-                    )}
+                    </div>
                   </div>
                   <div className='featured__content'>
                     <ul className='tgbanner__content-meta list-wrap'>

@@ -86,6 +86,10 @@
         background-color: var(--tg-dark-color-1);
         color: var(--tg-common-color-white);
     }
+    & .sidebar-widget {
+        background-color: var(--tg-dark-color-1);
+        color: var(--tg-common-color-white);
+    }
     & .header__top-right .lang .dropdown-menu li a {
         color: var(--tg-common-color-white);
         &:hover,

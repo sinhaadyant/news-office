@@ -22,12 +22,12 @@ const AdBlock: React.FC<AdBlockProps> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [adLoaded, setAdLoaded] = useState(false);
 
-  // Don't show ads for paid users
-  if (!shouldShowAds()) {
-    return null;
-  }
-
   useEffect(() => {
+    // Only run effect if ads should be shown
+    if (!shouldShowAds()) {
+      return;
+    }
+
     // Simulate ad loading
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -35,7 +35,12 @@ const AdBlock: React.FC<AdBlockProps> = ({
     }, 1000 + Math.random() * 2000); // Random loading time 1-3 seconds
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [shouldShowAds]);
+
+  // Don't show ads for paid users - moved after all hooks
+  if (!shouldShowAds()) {
+    return null;
+  }
 
   const getAdDimensions = () => {
     switch (type) {

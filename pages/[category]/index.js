@@ -8,8 +8,7 @@ import { ArticleCardSkeleton } from '@/components/common/SkeletonLoaders';
 import { AdBlockBannerPackage } from '@/components/common/AdBlockBannerPackage';
 import AdBlock from '@/components/ads/AdBlock';
 import PremiumBadge from '@/components/common/PremiumBadge';
-import data from '@/util/blogData';
-import { generateSlug } from '@/util/articleUtils';
+import { getArticlesByCategory, getCategoryBySlug, generateSlug } from '@/util/articleUtils';
 import {
   getCategoryLink,
   getAuthorLink,
@@ -37,10 +36,9 @@ export default function CategoryPage() {
   const [isInitialized, setIsInitialized] = useState(false);
   const [categoryData, setCategoryData] = useState([]);
 
-  // Filter data by category
-  const filteredData = data.filter(
-    item => item.category.toLowerCase() === category?.toLowerCase()
-  );
+  // Get articles by category using the proper utility function
+  const filteredData = category ? getArticlesByCategory(category) : [];
+  const categoryInfo = category ? getCategoryBySlug(category) : null;
 
   // Calculate total pages based on filtered data
   const totalPages = Math.ceil(filteredData.length / pagination);
@@ -214,9 +212,10 @@ export default function CategoryPage() {
                       <div className='section__title'>
                         <span className='section__sub-title'>Category</span>
                         <h3 className='section__main-title'>
-                          {category
-                            ? category.charAt(0).toUpperCase() +
-                              category.slice(1)
+                          {categoryInfo
+                            ? categoryInfo.displayName
+                            : category
+                            ? category.charAt(0).toUpperCase() + category.slice(1)
                             : 'Category'}
                         </h3>
                         {currentPage > 1 && (
@@ -228,8 +227,14 @@ export default function CategoryPage() {
                         )}
                         {filteredData.length > 0 && currentPage === 1 && (
                           <p className='section__description'>
-                            {filteredData.length} articles found in {category}{' '}
-                            category
+                            {filteredData.length} articles found in {categoryInfo ? categoryInfo.displayName : category} category
+                            {categoryInfo && categoryInfo.latestArticle && (
+                              <span className='d-block mt-2'>
+                                Latest: <Link href={getArticleLink(categoryInfo.latestArticle)} className='text-primary'>
+                                  {categoryInfo.latestArticle.title}
+                                </Link>
+                              </span>
+                            )}
                           </p>
                         )}
                       </div>
@@ -316,6 +321,18 @@ export default function CategoryPage() {
                             loading='lazy'
                           />
                         </Link>
+                        <div className='badge-container'>
+                          <div className='badge-left'>
+                            {item.trending && (
+                              <div className='trending-badge'>
+                                <span>🔥</span>
+                              </div>
+                            )}
+                          </div>
+                          <div className='badge-right'>
+                            <PremiumBadge isPremium={item.isPremium} />
+                          </div>
+                        </div>
                       </div>
                       <div className='latest__post-content'>
                         <ul className='tgbanner__content-meta list-wrap'>
@@ -330,27 +347,24 @@ export default function CategoryPage() {
                               {item.author}
                             </Link>
                           </li>
-                          <li>{item.date}</li>
-                          {item.trending && (
+                          <li>{item.date}</li> 
+                          {/* {item.trending && (
                             <li>
                               <span className='trending-badge'>
                                 🔥 Trending
                               </span>
                             </li>
-                          )}
-                          <li>
-                            <PremiumBadge isPremium={item.isPremium} />
-                          </li>
+                          )} */}
                         </ul>
                         <h3 className='title tgcommon__hover'>
                           <Link href={getArticleLink(item)}>{item.title}</Link>
                         </h3>
                         <p>{generateDescription(item)}</p>
                         <ul className='post__activity list-wrap'>
-                          <li>
+                          {/* <li>
                             <i className='fal fa-signal' />{' '}
                             {Math.floor(Math.random() * 5) + 1}k
-                          </li>
+                          </li> */}
                           <li>
                             <Link href={getArticleLink(item)}>
                               <i className='fal fa-comment-dots' />{' '}

@@ -1,11 +1,11 @@
 import Link from "next/link";
 import InstagramSidebarSlider from "../slider/InstagramSidebarSlider";
 import SidePostSlider from "../slider/SidePostSlider";
-import { getTrendingCategories } from "../../util/articleUtils";
+import { getAllCategories } from "../../util/articleUtils";
 
 export default function LatestSidebar() {
   // Get trending categories dynamically
-  const trendingCategories = getTrendingCategories();
+  const trendingCategories = getAllCategories().slice(0, 6); // Top 6 categories
 
   return (
     <>

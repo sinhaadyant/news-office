@@ -2,11 +2,12 @@ import React from 'react';
 import Link from 'next/link';
 import OptimizedImage from '@/components/common/OptimizedImage';
 import ComponentErrorBoundary from '@/components/common/ComponentErrorBoundary';
+import PremiumBadge from '@/components/common/PremiumBadge';
 import { generateSlug } from '@/util/articleUtils';
 
 export default function BannerGrid({ blockData }) {
-  const articles = blockData?.articlesData || [];
-  const featuredArticle = articles[0];
+  const articles = (blockData?.articlesData && Array.isArray(blockData.articlesData)) ? blockData.articlesData : [];
+  const featuredArticle = articles[0] || null;
   const sideArticles = articles.slice(1, 3);
 
   return (
@@ -31,6 +32,18 @@ export default function BannerGrid({ blockData }) {
                       priority={true}
                     />
                   </Link>
+                  <div className='badge-container'>
+                    <div className='badge-left'>
+                      {featuredArticle.trending && (
+                        <div className='trending-badge'>
+                          <span>🔥</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className='badge-right'>
+                      <PremiumBadge isPremium={featuredArticle.isPremium} />
+                    </div>
+                  </div>
                 </div>
                 <div className='tgbanner__content'>
                   <ul className='tgbanner__content-meta list-wrap'>
@@ -84,6 +97,18 @@ export default function BannerGrid({ blockData }) {
                         alt={article.title}
                       />
                     </Link>
+                    <div className='badge-container'>
+                      <div className='badge-left'>
+                        {article.trending && (
+                          <div className='trending-badge'>
+                            <span>🔥</span>
+                          </div>
+                        )}
+                      </div>
+                      <div className='badge-right'>
+                        <PremiumBadge isPremium={article.isPremium} />
+                      </div>
+                    </div>
                   </div>
                   <div className='tgbanner__content'>
                     <ul className='tgbanner__content-meta list-wrap'>

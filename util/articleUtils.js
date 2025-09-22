@@ -179,3 +179,99 @@ export const getAdjacentArticles = (currentId) => {
 export const clearArticlesCache = () => {
   articlesCache = null;
 };
+
+// Function to get all categories with detailed information
+export const getAllCategories = () => {
+  const articles = loadArticles();
+  const categoryData = {};
+  
+  // Process articles to build category data
+  Object.values(articles).forEach(article => {
+    if (article.category) {
+      const categoryName = article.category;
+      if (!categoryData[categoryName]) {
+        categoryData[categoryName] = {
+          name: categoryName,
+          displayName: categoryName.charAt(0).toUpperCase() + categoryName.slice(1),
+          slug: categoryName.toLowerCase(),
+          count: 0,
+          articles: [],
+          latestArticle: null,
+          image: `category-${categoryName.toLowerCase()}.jpg`
+        };
+      }
+      
+      categoryData[categoryName].count++;
+      categoryData[categoryName].articles.push(article);
+      
+      // Set latest article (assuming articles are ordered by date)
+      if (!categoryData[categoryName].latestArticle || 
+          new Date(article.date) > new Date(categoryData[categoryName].latestArticle.date)) {
+        categoryData[categoryName].latestArticle = article;
+      }
+    }
+  });
+  
+  return Object.values(categoryData).sort((a, b) => b.count - a.count);
+};
+
+// Function to get all authors with detailed information
+export const getAllAuthors = () => {
+  const articles = loadArticles();
+  const authorData = {};
+  
+  // Process articles to build author data
+  Object.values(articles).forEach(article => {
+    if (article.author) {
+      const authorName = article.author;
+      if (!authorData[authorName]) {
+        authorData[authorName] = {
+          name: authorName,
+          displayName: authorName.charAt(0).toUpperCase() + authorName.slice(1),
+          slug: authorName.toLowerCase().replace(/\s+/g, '-'),
+          count: 0,
+          articles: [],
+          latestArticle: null,
+          avatar: `author-${authorName.toLowerCase().replace(/\s+/g, '-')}.jpg`,
+          bio: `Experienced journalist and writer specializing in ${article.category || 'various topics'}.`,
+          social: {
+            twitter: `@${authorName.toLowerCase().replace(/\s+/g, '')}`,
+            linkedin: authorName.toLowerCase().replace(/\s+/g, '-'),
+            email: `${authorName.toLowerCase().replace(/\s+/g, '.')}@newshub.com`
+          }
+        };
+      }
+      
+      authorData[authorName].count++;
+      authorData[authorName].articles.push(article);
+      
+      // Set latest article
+      if (!authorData[authorName].latestArticle || 
+          new Date(article.date) > new Date(authorData[authorName].latestArticle.date)) {
+        authorData[authorName].latestArticle = article;
+      }
+    }
+  });
+  
+  return Object.values(authorData).sort((a, b) => b.count - a.count);
+};
+
+// Function to get articles by author
+export const getArticlesByAuthor = (authorName) => {
+  const articles = loadArticles();
+  return Object.values(articles).filter(
+    (article) => article.author && article.author.toLowerCase() === authorName.toLowerCase()
+  );
+};
+
+// Function to get category by slug
+export const getCategoryBySlug = (slug) => {
+  const categories = getAllCategories();
+  return categories.find(category => category.slug === slug.toLowerCase());
+};
+
+// Function to get author by slug
+export const getAuthorBySlug = (slug) => {
+  const authors = getAllAuthors();
+  return authors.find(author => author.slug === slug.toLowerCase());
+};

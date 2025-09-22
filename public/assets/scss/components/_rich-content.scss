@@ -1,0 +1,251 @@
+// Rich Content Styles for Article Pages
+.rich-content {
+  line-height: 1.8;
+  color: var(--tg-body-color);
+  
+  // Typography
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--tg-heading-color);
+  }
+  
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.75rem; }
+  h4 { font-size: 1.5rem; }
+  h5 { font-size: 1.25rem; }
+  h6 { font-size: 1.1rem; }
+  
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+  }
+  
+  // Images
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 2rem 0;
+    
+    &.img-fluid {
+      width: 100%;
+    }
+  }
+  
+  // Tables
+  table {
+    width: 100%;
+    margin: 2rem 0;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+      color: var(--tg-heading-color);
+    }
+    
+    tr:hover {
+      background-color: #f8f9fa;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+  }
+  
+  // Blockquotes
+  blockquote {
+    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    background: #f8f9fa;
+    border-left: 4px solid var(--tg-theme-primary);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    position: relative;
+    
+    p {
+      margin-bottom: 0;
+      font-size: 1.2rem;
+      color: #6c757d;
+    }
+    
+    footer {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #6c757d;
+      
+      cite {
+        font-style: normal;
+        font-weight: 600;
+      }
+    }
+  }
+  
+  // Lists
+  ul, ol {
+    margin: 1.5rem 0;
+    padding-left: 2rem;
+    
+    li {
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+  }
+  
+  // Code blocks
+  pre {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+    
+    code {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.9rem;
+      color: #e83e8c;
+    }
+  }
+  
+  // Inline code
+  code {
+    background: #f8f9fa;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.9em;
+    color: #e83e8c;
+  }
+  
+  // Links
+  a {
+    color: var(--tg-theme-primary);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      border-bottom-color: var(--tg-theme-primary);
+    }
+  }
+  
+  // Dividers
+  hr {
+    margin: 3rem 0;
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #e9ecef, transparent);
+  }
+  
+  // Video embeds
+  .video-container {
+    position: relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 56.25%; // 16:9 aspect ratio
+    margin: 2rem 0;
+    
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 8px;
+    }
+  }
+  
+  // Image captions
+  .image-caption,
+  .table-caption,
+  .video-caption {
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+    text-align: center;
+    font-style: italic;
+  }
+  
+  // Responsive adjustments
+  @media (max-width: 768px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.75rem; }
+    h3 { font-size: 1.5rem; }
+    h4 { font-size: 1.25rem; }
+    
+    p {
+      font-size: 1rem;
+    }
+    
+    blockquote {
+      padding: 1rem 1.5rem;
+      margin: 1.5rem 0;
+    }
+    
+    table {
+      font-size: 0.9rem;
+      
+      th, td {
+        padding: 8px 12px;
+      }
+    }
+    
+    pre {
+      padding: 1rem;
+      font-size: 0.8rem;
+    }
+  }
+  
+  // Dark mode support
+  .dark-mode & {
+    color: var(--tg-body-color);
+    
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--tg-heading-color);
+    }
+    
+    table {
+      background: var(--tg-bg-color);
+      
+      th {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: var(--tg-heading-color);
+      }
+      
+      tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+    }
+    
+    blockquote {
+      background: rgba(255, 255, 255, 0.05);
+      border-left-color: var(--tg-theme-primary);
+    }
+    
+    pre {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    code {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+}
+

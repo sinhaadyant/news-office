@@ -46,7 +46,8 @@ export const useUserStore = create<UserState>()(
 
       shouldShowAds: (): boolean => {
         const state = get();
-        return state.isLoggedIn && !state.isSubscriber; // Show ads only for free users
+        // Show ads for non-logged-in users and logged-in free users
+        return !state.isLoggedIn || (state.isLoggedIn && !state.isSubscriber);
       },
 
       getContentPreview: (content: string, isPremium: boolean): string => {

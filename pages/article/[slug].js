@@ -8,6 +8,7 @@ import { AdBlockBannerPackage } from '@/components/common/AdBlockBannerPackage';
 import AdBlock from '@/components/ads/AdBlock';
 import Paywall from '@/components/paywall/Paywall';
 import PremiumBadge from '@/components/common/PremiumBadge';
+import RichContentRenderer from '@/components/common/RichContentRenderer';
 import { useUserStore } from '@/stores/useUserStore';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -256,19 +257,27 @@ export default function BlogDetails() {
                   <div className='blog-details-wrap'>
                     <ul className='tgbanner__content-meta list-wrap'>
                       <li className='category'>
-                        <Link href={`/${item.category.toLowerCase()}`}>
-                          {item.category}
-                        </Link>
+                        {item.category ? (
+                          <Link href={`/${item.category.toLowerCase()}`}>
+                            {item.category}
+                          </Link>
+                        ) : (
+                          <span>Uncategorized</span>
+                        )}
                       </li>
                       <li>
                         <span className='by'>By</span>{' '}
-                        <Link
-                          href={`/author/${item.author
-                            .replace(' ', '-')
-                            .toLowerCase()}`}
-                        >
-                          {item.author}
-                        </Link>
+                        {item.author ? (
+                          <Link
+                            href={`/author/${item.author
+                              .replace(' ', '-')
+                              .toLowerCase()}`}
+                          >
+                            {item.author}
+                          </Link>
+                        ) : (
+                          <span>Unknown Author</span>
+                        )}
                       </li>
                       <li>{item.date}</li>
                       <li>{Math.floor(Math.random() * 50) + 1} comments</li>
@@ -294,7 +303,7 @@ export default function BlogDetails() {
                       {/* Dynamic content with ads and paywall */}
                       {item.content ? (
                         <Paywall isPremium={item.isPremium} content={item.content}>
-                          {renderContentWithAds(item.content, item.isPremium)}
+                          <RichContentRenderer content={item.content} />
                         </Paywall>
                       ) : (
                         <div>
@@ -370,7 +379,7 @@ export default function BlogDetails() {
                           </p>
                         </div>
                       )}
-                      <div className='blog-details-inner'>
+                      {/* <div className='blog-details-inner'>
                         <h3 className='inner-title'>
                           Building the Future of Artificial Intelligence
                         </h3>
@@ -493,7 +502,7 @@ export default function BlogDetails() {
                         flexibly around the world, as well as the usage tied to
                         its tech infrastructure including our cloud computing
                         services lexibly around the world.
-                      </p>
+                      </p> */}
                     </div>
                     <div className='blog-details-bottom'>
                       <div className='row align-items-baseline'>
@@ -656,7 +665,7 @@ export default function BlogDetails() {
                     <div className='blog-prev-next-posts'>
                       <div className='row'>
                         <div className='col-xl-6 col-lg-8 col-md-6'>
-                          {adjacentArticles.prev && (
+                          {adjacentArticles.prev && adjacentArticles.prev.title && (
                             <div className='pn-post-item'>
                               <div className='thumb'>
                                 <Link
@@ -688,7 +697,7 @@ export default function BlogDetails() {
                           )}
                         </div>
                         <div className='col-xl-6 col-lg-8 col-md-6'>
-                          {adjacentArticles.next && (
+                          {adjacentArticles.next && adjacentArticles.next.title && (
                             <div className='pn-post-item next-post'>
                               <div className='thumb'>
                                 <Link

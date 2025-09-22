@@ -394,17 +394,16 @@ export default function AuthorPage() {
                             </Link>
                           </li>
                           <li>{item.date}</li>
-                          {item.trending && (
+                          {/* {item.trending && (
                             <li>
                               <span className='trending-badge'>
                                 🔥 Trending
                               </span>
                             </li>
                           )}
-                          <li>
-                            <PremiumBadge isPremium={item.isPremium} />
-                          </li>
+                           */}
                         </ul>
+                        <PremiumBadge isPremium={item.isPremium} />
                         <h3 className='title tgcommon__hover'>
                           <Link href={getArticleLink(item)}>{item.title}</Link>
                         </h3>

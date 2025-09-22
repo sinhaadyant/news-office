@@ -1,6 +1,7 @@
 import Preloader from '@/components/elements/Preloader';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import AdBlockDetector from '@/components/common/AdBlockDetector';
+import { AuthProvider } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 import { initializeTheme } from '@/util/themeInitializer';
 import 'swiper/css';
@@ -33,41 +34,43 @@ function MyApp({ Component, pageProps }) {
 
   return (
     <ErrorBoundary>
-      <AdBlockDetector
-        // Detection options
-        detectionDelay={100}
-        // Callbacks
-        onAdBlockDetected={() => {
-          console.log('Ad blocker detected');
-          // You can add analytics tracking here
-          if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', 'ad_block_detected', {
-              event_category: 'ad_block',
-            });
-          }
-        }}
-        onAdBlockNotDetected={() => {
-          console.log('No ad blocker detected');
-          // You can add analytics tracking here
-          if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', 'no_ad_block', { event_category: 'ad_block' });
-          }
-        }}
-        // Modal configuration
-        showWarning={true}
-        warningMessage="We noticed you're using an ad blocker. Please support us by disabling it or consider subscribing to continue enjoying our content without ads."
-        warningTitle='Ad Blocker Detected'
-        showSubscribeButton={true}
-        // Subscribe callback
-        onSubscribe={() => {
-          // Redirect to subscription page or open subscription modal
-          window.open('/subscribe', '_blank');
-          // Or trigger your subscription modal
-          // Example: setShowSubscriptionModal(true);
-        }}
-      >
-        {!loading ? <Component {...pageProps} /> : <Preloader />}
-      </AdBlockDetector>
+      <AuthProvider>
+        <AdBlockDetector
+          // Detection options
+          detectionDelay={100}
+          // Callbacks
+          onAdBlockDetected={() => {
+            console.log('Ad blocker detected');
+            // You can add analytics tracking here
+            if (typeof window !== 'undefined' && window.gtag) {
+              window.gtag('event', 'ad_block_detected', {
+                event_category: 'ad_block',
+              });
+            }
+          }}
+          onAdBlockNotDetected={() => {
+            console.log('No ad blocker detected');
+            // You can add analytics tracking here
+            if (typeof window !== 'undefined' && window.gtag) {
+              window.gtag('event', 'no_ad_block', { event_category: 'ad_block' });
+            }
+          }}
+          // Modal configuration
+          showWarning={true}
+          warningMessage="We noticed you're using an ad blocker. Please support us by disabling it or consider subscribing to continue enjoying our content without ads."
+          warningTitle='Ad Blocker Detected'
+          showSubscribeButton={true}
+          // Subscribe callback
+          onSubscribe={() => {
+            // Redirect to subscription page or open subscription modal
+            window.open('/subscribe', '_blank');
+            // Or trigger your subscription modal
+            // Example: setShowSubscriptionModal(true);
+          }}
+        >
+          {!loading ? <Component {...pageProps} /> : <Preloader />}
+        </AdBlockDetector>
+      </AuthProvider>
     </ErrorBoundary>
   );
 }

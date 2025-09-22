@@ -241,23 +241,23 @@ export default function LatestPage() {
                             </Link>
                           </li>
                           <li>{item.date}</li>
-                          {item.trending && (
+                          {/* {item.trending && (
                             <li>
                               <span className="trending-badge">
                                 🔥 Trending
                               </span>
                             </li>
-                          )}
+                          )} */}
                         </ul>
                         <h3 className="title tgcommon__hover">
                           <Link href={getArticleLink(item)}>{item.title}</Link>
                         </h3>
                         <p>{generateDescription(item)}</p>
                         <ul className="post__activity list-wrap">
-                          <li>
+                          {/* <li>
                             <i className="fal fa-signal" />{" "}
                             {Math.floor(Math.random() * 5) + 1}k
-                          </li>
+                          </li> */}
                           <li>
                             <Link href={getArticleLink(item)}>
                               <i className="fal fa-comment-dots" />{" "}

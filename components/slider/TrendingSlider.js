@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Autoplay, Navigation, Pagination } from "swiper";
 import { generateSlug } from "@/util/articleUtils";
 import { getArticleLink } from "@/util/urlUtils";
+import PremiumBadge from "@/components/common/PremiumBadge";
 
-export default function TrendingSlider({ showItem }) {
+export default function TrendingSlider({ showItem, articles = [] }) {
   return (
     <>
       <Swiper
@@ -49,7 +50,7 @@ export default function TrendingSlider({ showItem }) {
         }}
         className="swiper-wrapper"
       >
-        {data.slice(0, 8).map((item, i) => (
+        {(articles.length > 0 ? articles : data.slice(0, 8)).map((item, i) => (
           <SwiperSlide key={i}>
             <div className="trending__post">
               <div className="trending__post-thumb tgImage__hover">
@@ -64,11 +65,18 @@ export default function TrendingSlider({ showItem }) {
                     alt="img"
                   />
                 </Link>
-                {item.trending && (
-                  <span className="is_trend">
-                    <i className="fas fa-bolt" />
-                  </span>
-                )}
+                <div className='badge-container'>
+                  <div className='badge-left'>
+                    {item.trending && (
+                      <div className='trending-badge'>
+                        <span>🔥</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className='badge-right'>
+                    <PremiumBadge isPremium={item.isPremium} />
+                  </div>
+                </div>
               </div>
               <div className="trending__post-content">
                 <ul className="tgbanner__content-meta list-wrap">
